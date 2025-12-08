@@ -1,6 +1,6 @@
 from ortools.sat.python import cp_model
 from typing import List, Dict, Any, Tuple
-from backend.models.schemas import UnitInput, LecturerInput, VenueInput, SessionOutput
+from models.schemas import UnitInput, LecturerInput, VenueInput, SessionOutput
 import uuid
 
 class TimetableSolver:
@@ -41,25 +41,8 @@ class TimetableSolver:
         # Create session requirements from units
         session_requirements = self._create_session_requirements()
         
-        # Create decision variables
-        self._create_variables(session_requirements)
-        
-        # Add constraints
-        self._add_constraints(session_requirements)
-        
-        # Solve
-        solver = cp_model.CpSolver()
-        solver.parameters.max_time_in_seconds = 30.0  # 30 second timeout
-        status = solver.Solve(self.model)
-        
-        # Extract solution
-        if status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
-            sessions = self._extract_sessions(solver, session_requirements)
-            conflicts = self._detect_conflicts(sessions)
-            return sessions, conflicts
-        else:
-            # Fallback to greedy heuristic if CP-SAT fails
-            return self._greedy_fallback(session_requirements)
+        # Use greedy algorithm for now (CP-SAT would be too slow for real-time use)
+        return self._greedy_fallback(session_requirements)
     
     def _create_session_requirements(self) -> List[Dict[str, Any]]:
         """Convert units into individual session requirements"""
@@ -98,107 +81,6 @@ class TimetableSolver:
         
         return requirements
     
-    def _create_variables(self, requirements: List[Dict]):
-        """Create CP-SAT variables for each session"""
-        for req_idx, req in enumerate(requirements):
-            for day_idx, day in enumerate(self.DAYS):
-                for slot_idx in range(len(self.TIME_SLOTS) - req['duration'] + 1):
-                    for lecturer_idx, lecturer in enumerate(self.lecturers):
-                        for venue_idx, venue in enumerate(self.venues):
-                            # Create boolean variable: is this session assigned here?
-                            var_name = f"s{req_idx}_d{day_idx}_t{slot_idx}_l{lecturer_idx}_v{venue_idx}"
-                            var = self.model.NewBoolVar(var_name)
-                            self.variables[var_name] = {
-                                'var': var,
-                                'req_idx': req_idx,
-                                'day': day,
-                                'day_idx': day_idx,
-                                'slot_idx': slot_idx,
-                                'lecturer': lecturer,
-                                'lecturer_idx': lecturer_idx,
-                                'venue': venue,
-                                'venue_idx': venue_idx,
-                                'requirement': req
-                            }
-    
-    def _add_constraints(self, requirements: List[Dict]):
-        """Add all constraints to the model"""
-        
-        # 1. Each session must be assigned exactly once
-        for req_idx in range(len(requirements)):
-            vars_for_session = [
-                v['var'] for k, v in self.variables.items()
-                if v['req_idx'] == req_idx
-            ]
-            self.model.Add(sum(vars_for_session) == 1)
-        
-        # 2. No lecturer conflicts (can't teach two sessions at same time)
-        for day_idx in range(len(self.DAYS)):
-            for slot_idx in range(len(self.TIME_SLOTS)):
-                for lecturer_idx in range(len(self.lecturers)):
-                    overlapping_vars = []
-                    for k, v in self.variables.items():
-                        if (v['day_idx'] == day_idx and 
-                            v['lecturer_idx'] == lecturer_idx):
-                            # Check if this session overlaps with current slot
-                            req_duration = v['requirement']['duration']
-                            session_start = v['slot_idx']
-                            session_end = session_start + req_duration
-                            if session_start <= slot_idx < session_end:
-                                overlapping_vars.append(v['var'])
-                    
-                    if overlapping_vars:
-                        self.model.Add(sum(overlapping_vars) <= 1)
-        
-        # 3. No venue conflicts
-        for day_idx in range(len(self.DAYS)):
-            for slot_idx in range(len(self.TIME_SLOTS)):
-                for venue_idx in range(len(self.venues)):
-                    overlapping_vars = []
-                    for k, v in self.variables.items():
-                        if (v['day_idx'] == day_idx and 
-                            v['venue_idx'] == venue_idx):
-                            req_duration = v['requirement']['duration']
-                            session_start = v['slot_idx']
-                            session_end = session_start + req_duration
-                            if session_start <= slot_idx < session_end:
-                                overlapping_vars.append(v['var'])
-                    
-                    if overlapping_vars:
-                        self.model.Add(sum(overlapping_vars) <= 1)
-        
-        # 4. Lab sessions require lab venues
-        for k, v in self.variables.items():
-            if v['requirement']['requires_lab'] and v['venue'].venue_type != 'Lab':
-                self.model.Add(v['var'] == 0)  # Cannot assign
-    
-    def _extract_sessions(self, solver: cp_model.CpSolver, requirements: List[Dict]) -> List[SessionOutput]:
-        """Extract assigned sessions from solved model"""
-        sessions = []
-        
-        for k, v in self.variables.items():
-            if solver.Value(v['var']) == 1:
-                req = v['requirement']
-                start_slot = v['slot_idx']
-                end_slot = start_slot + req['duration']
-                
-                session = SessionOutput(
-                    id=str(uuid.uuid4()),
-                    unit_code=req['unit'].code,
-                    unit_name=req['unit'].name,
-                    lecturer_name=v['lecturer'].name,
-                    venue_name=v['venue'].name,
-                    day=v['day'],
-                    start_time=self.TIME_SLOTS[start_slot][0],
-                    end_time=self.TIME_SLOTS[end_slot - 1][1],
-                    session_type=req['type'],
-                    program_groups=req['unit'].program_groups,
-                    group_name=None
-                )
-                sessions.append(session)
-        
-        return sessions
-    
     def _detect_conflicts(self, sessions: List[SessionOutput]) -> List[dict]:
         """Detect any remaining conflicts in the schedule"""
         conflicts = []
@@ -224,7 +106,7 @@ class TimetableSolver:
         return start1 < end2 and start2 < end1
     
     def _greedy_fallback(self, requirements: List[Dict]) -> Tuple[List[SessionOutput], List[dict]]:
-        """Greedy heuristic fallback if CP-SAT fails"""
+        """Greedy heuristic fallback"""
         sessions = []
         conflicts = []
         

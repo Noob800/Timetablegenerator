@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# Install Python dependencies if not already installed
-if [ ! -d "$HOME/.local/lib/python3.11/site-packages/fastapi" ]; then
-    echo "Installing Python dependencies..."
-    python3.11 -m pip install --user -r backend/requirements.txt
-fi
+echo "Starting FastAPI Backend Server..."
+echo "Backend will run on http://localhost:8000"
+echo "API Documentation: http://localhost:8000/docs"
+echo ""
 
-# Start FastAPI backend
-echo "Starting FastAPI backend on port 8000..."
-cd backend && python3.11 -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+# Activate Python virtual environment created by uv
+export PATH="$PWD/.pythonlibs/bin:$PATH"
+
+# Start FastAPI with uvicorn
+cd backend && python3 -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload

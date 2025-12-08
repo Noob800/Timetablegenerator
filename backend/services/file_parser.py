@@ -1,7 +1,7 @@
 import pandas as pd
 from io import BytesIO
-from typing import List, Dict, Any
-from backend.models.schemas import UnitInput, LecturerInput, VenueInput
+from typing import List
+from models.schemas import UnitInput, LecturerInput, VenueInput
 
 class FileParser:
     """Parse uploaded CSV/XLSX files for timetable generation"""

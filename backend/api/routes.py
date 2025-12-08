@@ -1,10 +1,9 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException, Form
-from fastapi.responses import JSONResponse
-from typing import List, Optional
+from fastapi import APIRouter, UploadFile, File, HTTPException
+from typing import List
 import os
-from backend.services.file_parser import FileParser
-from backend.services.timetable_solver import TimetableSolver
-from backend.models.schemas import (
+from services.file_parser import FileParser
+from services.timetable_solver import TimetableSolver
+from models.schemas import (
     TimetableGenerationRequest,
     TimetableOutput,
     UnitInput,

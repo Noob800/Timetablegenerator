@@ -1,11 +1,12 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 import os
-from dotenv import load_dotenv
-from backend.api.routes import router
+import sys
 
-load_dotenv()
+# Add parent directory to path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from api.routes import router
 
 app = FastAPI(
     title="TimetableGen API",
