@@ -2,108 +2,74 @@ import React, { useMemo } from 'react';
 import { cn } from "@/lib/utils";
 import { MOCK_SESSIONS, MOCK_UNITS, MOCK_VENUES, MOCK_LECTURERS, Session } from "@/lib/mockData";
 import { Clock, MapPin, User, AlertCircle, Users } from 'lucide-react';
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface TimetableGridProps {
   viewMode: 'program' | 'lecturer' | 'venue';
-  filterId?: string; // ID of the program/lecturer/venue to show
+  filterId?: string;
 }
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-const TIME_SLOTS = [
-  '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', 
-  '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'
-];
+const START_HOUR = 7; // 7 AM
+const END_HOUR = 20;  // 8 PM
+const HOURS_COUNT = END_HOUR - START_HOUR;
+const PIXELS_PER_HOUR = 120; // Width of one hour column
+const MIN_ROW_HEIGHT = 120; // Minimum height for a day row
+const SESSION_HEIGHT = 80; // Height of a single session card
+const SESSION_GAP = 8; // Vertical gap between stacked sessions
 
-const ROW_HEIGHT_PX = 96; // h-24
-const HEADER_HEIGHT_PX = 48; // h-12
+// Helper to check if two sessions overlap
+const doOverlap = (a: Session, b: Session) => {
+  const startA = parseFloat(a.startTime.replace(':', '.'));
+  const endA = parseFloat(a.endTime.replace(':', '.'));
+  const startB = parseFloat(b.startTime.replace(':', '.'));
+  const endB = parseFloat(b.endTime.replace(':', '.'));
+  return startA < endB && startB < endA;
+};
 
-// Helper to layout overlap events
-function layoutDayEvents(sessions: Session[]) {
-  // Simple column packing algorithm
-  // 1. Sort by start time, then duration (desc)
+// Layout Algorithm: Stack overlapping events vertically
+function layoutDaySessions(sessions: Session[]) {
+  // Sort by start time, then duration
   const sorted = [...sessions].sort((a, b) => {
-    if (a.startTime === b.startTime) {
-      const durA = parseInt(a.endTime) - parseInt(a.startTime);
-      const durB = parseInt(b.endTime) - parseInt(b.startTime);
-      return durB - durA;
+    const startA = parseFloat(a.startTime.replace(':', '.'));
+    const startB = parseFloat(b.startTime.replace(':', '.'));
+    if (startA === startB) {
+       const durA = parseFloat(a.endTime.replace(':', '.')) - startA;
+       const durB = parseFloat(b.endTime.replace(':', '.')) - startB;
+       return durB - durA; // Longest first
     }
-    return parseInt(a.startTime) - parseInt(b.startTime);
+    return startA - startB;
   });
 
-  const columns: Session[][] = [];
-  
+  const positionedSessions: { session: Session; rowIndex: number }[] = [];
+  const rows: Session[][] = []; // Track end times of sessions in each row
+
   sorted.forEach(session => {
-    // Find first column where session fits
     let placed = false;
-    for (const column of columns) {
-      const lastSessionInColumn = column[column.length - 1];
-      // Check if this session starts after the last one ends
-      if (parseInt(session.startTime) >= parseInt(lastSessionInColumn.endTime)) {
-        column.push(session);
+    // Try to fit in existing rows
+    for (let i = 0; i < rows.length; i++) {
+      const rowSessions = rows[i];
+      // Check for overlap with ANY session in this row
+      const hasOverlap = rowSessions.some(s => doOverlap(s, session));
+      
+      if (!hasOverlap) {
+        rows[i].push(session);
+        positionedSessions.push({ session, rowIndex: i });
         placed = true;
         break;
       }
     }
-    
+
+    // If not placed, start a new row
     if (!placed) {
-      columns.push([session]);
+      rows.push([session]);
+      positionedSessions.push({ session, rowIndex: rows.length - 1 });
     }
   });
 
-  // Calculate width and left for each session
-  // This is a simplified version. A proper one would check connectivity.
-  // For now, we just divide by number of columns if overlaps exist.
-  // Actually, let's just use the column index and total columns approach for the whole day?
-  // No, that makes non-overlapping sessions narrow.
-  
-  // Better approach for UI: Just return the columns and let rendering handle width = 100 / columns.length
-  // But this applies to the whole day which is wrong.
-  
-  // Real layouting is complex. Let's do a simplified "Event Group" approach.
-  // Group events that overlap with each other.
-  
-  const groups: Session[][] = [];
-  
-  // Linear scan to group overlapping events
-  let currentGroup: Session[] = [];
-  let groupEndTime = 0;
-  
-  sorted.forEach(session => {
-    const start = parseInt(session.startTime);
-    const end = parseInt(session.endTime);
-    
-    if (currentGroup.length === 0) {
-      currentGroup.push(session);
-      groupEndTime = end;
-    } else {
-      if (start < groupEndTime) {
-        currentGroup.push(session);
-        groupEndTime = Math.max(groupEndTime, end);
-      } else {
-        groups.push(currentGroup);
-        currentGroup = [session];
-        groupEndTime = end;
-      }
-    }
-  });
-  if (currentGroup.length > 0) groups.push(currentGroup);
-  
-  // Now assign layout props to each session in the groups
-  const layoutMap = new Map<string, { left: number, width: number }>();
-  
-  groups.forEach(group => {
-     const count = group.length;
-     group.forEach((s, idx) => {
-       layoutMap.set(s.id, {
-         left: (idx / count) * 100,
-         width: 100 / count
-       });
-     });
-  });
-  
-  return layoutMap;
+  return {
+    sessions: positionedSessions,
+    totalRows: Math.max(1, rows.length)
+  };
 }
 
 export default function TimetableGrid({ viewMode, filterId }: TimetableGridProps) {
@@ -119,132 +85,125 @@ export default function TimetableGrid({ viewMode, filterId }: TimetableGridProps
   const getVenueDetails = (id: string) => MOCK_VENUES.find(v => v.id === id);
   const getLecturerDetails = (id: string) => MOCK_LECTURERS.find(l => l.id === id);
 
-  // Pre-calculate layout for each day
-  const dayLayouts = useMemo(() => {
-    const layouts: Record<string, Map<string, { left: number, width: number }>> = {};
-    DAYS.forEach(day => {
-      const daySessions = filteredSessions.filter(s => s.day === day);
-      layouts[day] = layoutDayEvents(daySessions);
-    });
-    return layouts;
-  }, [filteredSessions]);
-
   return (
     <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden flex flex-col h-full print:border-0 print:shadow-none">
-      <div className="overflow-auto flex-1 thin-scrollbar relative">
-        <div className="min-w-[1000px] grid grid-cols-[80px_repeat(5,1fr)] bg-muted/20 print:bg-white relative">
-          
-          {/* Header Row: Days */}
-          <div className="h-12 border-b border-r border-border bg-muted/50 font-mono text-xs text-muted-foreground sticky top-0 z-30 backdrop-blur-sm print:static print:bg-transparent flex items-center justify-center font-bold">
-            TIME
-          </div>
-          {DAYS.map(day => (
-            <div key={day} className="h-12 border-b border-r border-border bg-muted/30 font-semibold text-sm flex items-center justify-center sticky top-0 z-30 backdrop-blur-sm print:static print:bg-transparent uppercase tracking-wider">
-              {day}
-            </div>
-          ))}
-
-          {/* Time Slots (Left Column) + Grid Cells */}
-          {TIME_SLOTS.map((time, index) => (
-            <React.Fragment key={time}>
-              <div className="h-24 border-b border-r border-border text-xs text-muted-foreground font-mono text-center flex flex-col justify-start pt-2 bg-muted/10 sticky left-0 z-20 print:static print:bg-transparent">
-                {time}
-              </div>
-              {DAYS.map(day => (
-                <div key={`${day}-${time}`} className="h-24 border-b border-r border-border relative bg-background/50 print:bg-transparent">
-                </div>
-              ))}
-            </React.Fragment>
-          ))}
-
-          {/* Overlay Sessions */}
-          <div 
-            className="grid grid-cols-[80px_repeat(5,1fr)] gap-0 absolute inset-0 pointer-events-none z-10" 
-            style={{ 
-              top: `${HEADER_HEIGHT_PX}px`, 
-              height: `calc(100% - ${HEADER_HEIGHT_PX}px)` 
-            }}
-          >
-             <div className="row-span-full border-r border-transparent"></div>
-
-             {DAYS.map((day, dayIndex) => (
-               <div key={day} className="relative row-span-full border-r border-transparent pointer-events-auto">
-                 {filteredSessions.filter(s => s.day === day).map(session => {
-                    const unit = getUnitDetails(session.unitId);
-                    const venue = getVenueDetails(session.venueId);
-                    const lecturer = getLecturerDetails(session.lecturerId);
-                    const layout = dayLayouts[day].get(session.id) || { left: 0, width: 100 };
-                    
-                    const startHour = parseInt(session.startTime.split(':')[0]);
-                    const endHour = parseInt(session.endTime.split(':')[0]);
-                    const topOffset = (startHour - 7) * ROW_HEIGHT_PX;
-                    const height = (endHour - startHour) * ROW_HEIGHT_PX;
-
-                    const colorClass = unit?.color || "bg-gray-100 text-gray-800 border-gray-200";
-                    const baseColor = colorClass.split('-')[1] || 'gray'; 
-
-                    // Check for conflict (naive check for demonstration)
-                    const isConflict = session.id === 's11' || session.id === 's12';
-
-                    return (
-                      <div 
-                        key={session.id}
-                        className={cn(
-                          "absolute px-2 py-1.5 text-xs transition-all cursor-pointer group overflow-hidden flex flex-col gap-0.5 hover:z-50 hover:brightness-95 hover:shadow-md",
-                          "border-l-[3px] border-b border-r border-t-0 rounded-sm",
-                          colorClass,
-                          isConflict && "ring-2 ring-red-500 ring-inset z-50"
-                        )}
-                        style={{ 
-                          top: `${topOffset}px`, 
-                          height: `${height}px`,
-                          left: `${layout.left}%`,
-                          width: `${layout.width}%`,
-                          borderColor: `var(--color-${baseColor}-500)`
-                        }}
-                      >
-                        <div className="flex justify-between items-start mb-0.5">
-                          <span className="font-bold font-mono text-[10px] uppercase tracking-wider opacity-90 truncate">{unit?.code}</span>
-                          <div className="flex gap-1 shrink-0">
-                            {session.groupName && (
-                                <span className="font-bold text-[9px] px-1 rounded bg-black/10 uppercase">{session.groupName}</span>
-                            )}
-                            {session.type === 'Lab' && <span className="font-bold text-[9px] px-1 rounded bg-black/5 uppercase">LAB</span>}
-                            {session.type === 'Exam' && <span className="font-bold text-[9px] px-1 rounded bg-red-500/10 text-red-700 uppercase">EXAM</span>}
-                          </div>
-                        </div>
-                        
-                        <h4 className="font-semibold leading-tight text-[11px] mb-auto line-clamp-2">{unit?.name}</h4>
-                        
-                        <div className="space-y-0.5 opacity-80 mt-1 min-h-0 overflow-hidden">
-                          <div className="flex items-center gap-1.5 text-[10px]">
-                            <User className="w-3 h-3 opacity-70 shrink-0" />
-                            <span className="truncate">{lecturer?.name}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5 text-[10px]">
-                            <MapPin className="w-3 h-3 opacity-70 shrink-0" />
-                            <span className="truncate font-medium">{venue?.name}</span>
-                          </div>
-                          {/* Program Groups List (if space allows, or on hover) */}
-                          <div className="flex items-center gap-1.5 text-[10px] pt-1 border-t border-black/5 mt-1">
-                             <Users className="w-3 h-3 opacity-70 shrink-0" />
-                             <span className="truncate text-[9px]">{session.programGroups.join(', ')}</span>
-                          </div>
-
-                           {isConflict && (
-                             <div className="flex items-center gap-1 text-red-600 font-bold bg-red-50/90 p-1 rounded animate-pulse w-full mt-1 justify-center">
-                               <AlertCircle className="w-3 h-3" />
-                               <span className="text-[9px]">CONFLICT</span>
-                             </div>
-                           )}
-                        </div>
-                      </div>
-                    );
-                 })}
-               </div>
-             ))}
-          </div>
+      
+      {/* Header: Time Axis (Horizontal) */}
+      <div className="flex border-b border-border bg-muted/50 sticky top-0 z-30 backdrop-blur-sm print:static">
+        {/* Corner Spacer */}
+        <div className="w-24 shrink-0 border-r border-border bg-muted/50 p-3 font-mono text-xs font-bold text-muted-foreground flex items-center justify-center sticky left-0 z-40">
+          DAY \ TIME
         </div>
+        
+        {/* Time Labels */}
+        <div className="flex-1 overflow-hidden relative" style={{ height: '48px' }}>
+           <div className="absolute inset-0 flex" style={{ width: `${HOURS_COUNT * PIXELS_PER_HOUR}px` }}>
+              {Array.from({ length: HOURS_COUNT }).map((_, i) => {
+                const hour = START_HOUR + i;
+                const timeLabel = `${hour.toString().padStart(2, '0')}:00`;
+                return (
+                  <div key={hour} className="border-r border-border/50 text-xs text-muted-foreground font-medium flex items-center justify-start pl-2" style={{ width: `${PIXELS_PER_HOUR}px` }}>
+                    {timeLabel}
+                  </div>
+                );
+              })}
+           </div>
+        </div>
+      </div>
+
+      {/* Body: Days (Vertical) */}
+      <div className="overflow-auto flex-1 thin-scrollbar relative bg-white">
+         <div className="min-w-fit">
+            {DAYS.map(day => {
+               const daySessions = filteredSessions.filter(s => s.day === day);
+               const { sessions: layoutData, totalRows } = layoutDaySessions(daySessions);
+               
+               // Calculate day row height based on how many stacked items we have
+               // Add some padding
+               const rowHeight = Math.max(MIN_ROW_HEIGHT, (totalRows * (SESSION_HEIGHT + SESSION_GAP)) + 24);
+
+               return (
+                 <div key={day} className="flex border-b border-border group hover:bg-muted/5 transition-colors">
+                    {/* Day Label (Sticky Left) */}
+                    <div className="w-24 shrink-0 border-r border-border bg-muted/10 p-4 font-bold text-sm flex items-center justify-center sticky left-0 z-20 backdrop-blur-sm uppercase tracking-wider text-muted-foreground writing-vertical-lr md:writing-horizontal-tb">
+                       <span className="-rotate-90 md:rotate-0">{day}</span>
+                    </div>
+
+                    {/* Timeline Content */}
+                    <div className="relative flex-1" style={{ height: `${rowHeight}px`, width: `${HOURS_COUNT * PIXELS_PER_HOUR}px` }}>
+                       
+                       {/* Background Grid Lines */}
+                       <div className="absolute inset-0 flex pointer-events-none">
+                          {Array.from({ length: HOURS_COUNT }).map((_, i) => (
+                             <div key={i} className="border-r border-dashed border-border/30 h-full" style={{ width: `${PIXELS_PER_HOUR}px` }} />
+                          ))}
+                       </div>
+
+                       {/* Sessions */}
+                       {layoutData.map(({ session, rowIndex }) => {
+                          const unit = getUnitDetails(session.unitId);
+                          const venue = getVenueDetails(session.venueId);
+                          const lecturer = getLecturerDetails(session.lecturerId);
+                          
+                          // Calculate Horizontal Position
+                          const start = parseFloat(session.startTime.replace(':', '.'));
+                          const end = parseFloat(session.endTime.replace(':', '.'));
+                          const duration = end - start;
+                          
+                          const left = (start - START_HOUR) * PIXELS_PER_HOUR;
+                          const width = duration * PIXELS_PER_HOUR;
+                          
+                          // Calculate Vertical Position (Stacking)
+                          const top = 12 + (rowIndex * (SESSION_HEIGHT + SESSION_GAP));
+
+                          const colorClass = unit?.color || "bg-gray-100 text-gray-800 border-gray-200";
+                          const baseColor = colorClass.split('-')[1] || 'gray'; 
+
+                          return (
+                            <div 
+                              key={session.id}
+                              className={cn(
+                                "absolute rounded-md border p-2 text-xs shadow-sm hover:shadow-md transition-all cursor-pointer group overflow-hidden flex flex-col gap-0.5 hover:z-50 hover:scale-[1.02]",
+                                "border-l-[4px]",
+                                colorClass
+                              )}
+                              style={{ 
+                                left: `${left}px`, 
+                                width: `${width - 8}px`, // Slight gap
+                                top: `${top}px`,
+                                height: `${SESSION_HEIGHT}px`,
+                                borderColor: `var(--color-${baseColor}-500)`
+                              }}
+                            >
+                               <div className="flex justify-between items-start">
+                                  <span className="font-bold font-mono text-[10px] uppercase tracking-wider opacity-90 truncate max-w-[70%]">{unit?.code}</span>
+                                  <div className="flex gap-1 shrink-0">
+                                     {session.groupName && <span className="font-bold text-[9px] px-1 rounded bg-black/10">{session.groupName}</span>}
+                                     {session.type === 'Lab' && <span className="font-bold text-[9px] px-1 rounded bg-black/5">LAB</span>}
+                                     {session.type === 'Exam' && <span className="font-bold text-[9px] px-1 rounded bg-red-500/10 text-red-700">EXAM</span>}
+                                  </div>
+                               </div>
+                               
+                               <h4 className="font-semibold leading-tight text-[11px] line-clamp-2 my-auto">{unit?.name}</h4>
+                               
+                               <div className="flex items-center justify-between text-[10px] opacity-80 mt-auto pt-1 border-t border-black/5">
+                                  <div className="flex items-center gap-1">
+                                     <MapPin className="w-3 h-3" />
+                                     <span className="truncate max-w-[60px]">{venue?.name}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                     <User className="w-3 h-3" />
+                                     <span className="truncate max-w-[80px]">{lecturer?.name.split(' ').pop()}</span>
+                                  </div>
+                               </div>
+                            </div>
+                          );
+                       })}
+                    </div>
+                 </div>
+               );
+            })}
+         </div>
       </div>
     </div>
   );
