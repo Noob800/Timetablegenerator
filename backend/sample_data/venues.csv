@@ -1,0 +1,13 @@
+name,capacity,type,equipment
+TLH 1,200,Lecture Hall,Projector
+LAB 1 (Comp),50,Lab,"Computers,Projector"
+GF 1 (Science),80,Classroom,Projector
+Chapel,500,Lecture Hall,"Audio System,Projector"
+N Lab 3,40,Lab,"Nursing Equipment,Projector"
+Physics Lab,30,Lab,"Physics Equipment,Safety Gear"
+Chem Lab,30,Lab,"Chemistry Equipment,Safety Gear"
+TLH 2,150,Lecture Hall,"Projector,Audio System"
+CR 101,60,Classroom,Whiteboard
+CR 102,60,Classroom,Whiteboard
+LAB 2 (Comp),45,Lab,"Computers,Projector"
+Seminar Room 1,25,Seminar Room,Projector

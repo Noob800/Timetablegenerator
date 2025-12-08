@@ -1,0 +1,10 @@
+code,name,credit_hours,lecture_hours,lab_hours,tutorial_hours,program_groups
+COMP 100,Introduction to Computer Science,3,2,3,0,"CS-Y1,IT-Y1"
+MATH 110,Calculus I,4,3,0,1,"CS-Y1,ENG-Y1"
+PHYS 205,Physics for Engineers,4,2,3,0,ENG-Y2
+NRSG 343,Advanced Nursing Practice,3,2,3,0,NRSG-Y3
+THEO 121,Introduction to Theology,3,2,0,0,ALL-Y1
+CHEM 101,General Chemistry,4,2,3,0,SCI-Y1
+COMM 111,Communication Skills,3,2,0,1,ALL-Y1
+PROG 201,Advanced Programming,4,2,4,0,"CS-Y2,IT-Y2"
+DATABASE 301,Database Systems,3,2,3,0,"CS-Y3,BBIT-Y3"

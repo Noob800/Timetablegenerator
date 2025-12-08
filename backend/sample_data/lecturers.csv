@@ -1,0 +1,9 @@
+name,department,email,max_hours_per_week,availability
+Dr. James Kubai,Computer Science,j.kubai@university.edu,20,"Monday,Tuesday,Wednesday,Thursday,Friday"
+Prof. Sarah Mungai,Mathematics,s.mungai@university.edu,18,"Monday,Tuesday,Wednesday,Thursday,Friday"
+Rev. Dr. Alice M,Theology,alice.m@university.edu,16,"Tuesday,Wednesday,Thursday"
+Dr. Rose,Nursing,dr.rose@university.edu,20,"Monday,Tuesday,Wednesday,Thursday,Friday"
+Dr. Mwenda,Physics,mwenda@university.edu,20,"Monday,Tuesday,Thursday,Friday"
+Mr. John Doe,Chemistry,j.doe@university.edu,18,"Monday,Wednesday,Thursday,Friday"
+Prof. Jane Smith,Computer Science,j.smith@university.edu,20,"Monday,Tuesday,Wednesday,Friday"
+Dr. Peter Kim,Database,p.kim@university.edu,18,"Tuesday,Wednesday,Thursday,Friday"
