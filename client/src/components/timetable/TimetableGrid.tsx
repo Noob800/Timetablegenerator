@@ -16,6 +16,9 @@ const TIME_SLOTS = [
   '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'
 ];
 
+const ROW_HEIGHT_PX = 96; // h-24 = 6rem = 96px
+const HEADER_HEIGHT_PX = 48; // h-12 = 3rem = 48px
+
 export default function TimetableGrid({ viewMode, filterId }: TimetableGridProps) {
   // Mock Filtering Logic
   const filteredSessions = MOCK_SESSIONS.filter(session => {
@@ -26,34 +29,21 @@ export default function TimetableGrid({ viewMode, filterId }: TimetableGridProps
     return true;
   });
 
-  const getSessionStyle = (session: typeof MOCK_SESSIONS[0]) => {
-    const startHour = parseInt(session.startTime.split(':')[0]);
-    const endHour = parseInt(session.endTime.split(':')[0]);
-    const duration = endHour - startHour;
-    
-    // Grid row mapping (7am is row 1)
-    const startRow = startHour - 6; 
-    
-    return {
-      gridRow: `${startRow} / span ${duration}`,
-    };
-  };
-
   const getUnitDetails = (id: string) => MOCK_UNITS.find(u => u.id === id);
   const getVenueDetails = (id: string) => MOCK_VENUES.find(v => v.id === id);
   const getLecturerDetails = (id: string) => MOCK_LECTURERS.find(l => l.id === id);
 
   return (
     <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden flex flex-col h-full print:border-0 print:shadow-none">
-      <div className="overflow-auto flex-1 thin-scrollbar">
-        <div className="min-w-[1000px] grid grid-cols-[80px_repeat(5,1fr)] bg-muted/20 print:bg-white">
+      <div className="overflow-auto flex-1 thin-scrollbar relative">
+        <div className="min-w-[1000px] grid grid-cols-[80px_repeat(5,1fr)] bg-muted/20 print:bg-white relative">
           
           {/* Header Row: Days */}
-          <div className="p-4 border-b border-r border-border bg-muted/50 font-mono text-xs text-muted-foreground sticky top-0 z-20 backdrop-blur-sm print:static print:bg-transparent">
-            TIME / DAY
+          <div className="h-12 border-b border-r border-border bg-muted/50 font-mono text-xs text-muted-foreground sticky top-0 z-30 backdrop-blur-sm print:static print:bg-transparent flex items-center justify-center font-bold">
+            TIME
           </div>
           {DAYS.map(day => (
-            <div key={day} className="p-3 border-b border-r border-border bg-muted/30 font-semibold text-sm text-center sticky top-0 z-10 backdrop-blur-sm print:static print:bg-transparent">
+            <div key={day} className="h-12 border-b border-r border-border bg-muted/30 font-semibold text-sm flex items-center justify-center sticky top-0 z-30 backdrop-blur-sm print:static print:bg-transparent uppercase tracking-wider">
               {day}
             </div>
           ))}
@@ -62,13 +52,13 @@ export default function TimetableGrid({ viewMode, filterId }: TimetableGridProps
           {TIME_SLOTS.map((time, index) => (
             <React.Fragment key={time}>
               {/* Time Label */}
-              <div className="p-2 border-b border-r border-border text-xs text-muted-foreground font-mono text-center flex flex-col justify-start pt-3 bg-muted/10 sticky left-0 z-10 print:static print:bg-transparent">
+              <div className="h-24 border-b border-r border-border text-xs text-muted-foreground font-mono text-center flex flex-col justify-start pt-2 bg-muted/10 sticky left-0 z-20 print:static print:bg-transparent">
                 {time}
               </div>
 
               {/* Day Cells for this Time Slot */}
               {DAYS.map(day => (
-                <div key={`${day}-${time}`} className="border-b border-r border-border h-24 relative bg-background/50 group hover:bg-muted/5 transition-colors print:bg-transparent">
+                <div key={`${day}-${time}`} className="h-24 border-b border-r border-border relative bg-background/50 print:bg-transparent">
                   {/* Grid Lines/Background only */}
                 </div>
               ))}
@@ -76,7 +66,13 @@ export default function TimetableGrid({ viewMode, filterId }: TimetableGridProps
           ))}
 
           {/* Overlay Sessions using CSS Grid on the main container */}
-          <div className="grid grid-cols-[80px_repeat(5,1fr)] gap-0 absolute inset-0 pt-[45px] pointer-events-none" style={{ height: 'fit-content' }}>
+          <div 
+            className="grid grid-cols-[80px_repeat(5,1fr)] gap-0 absolute inset-0 pointer-events-none z-10" 
+            style={{ 
+              top: `${HEADER_HEIGHT_PX}px`, 
+              height: `calc(100% - ${HEADER_HEIGHT_PX}px)` 
+            }}
+          >
              {/* Spacer for Time Column */}
              <div className="row-span-full border-r border-transparent"></div>
 
@@ -91,39 +87,50 @@ export default function TimetableGrid({ viewMode, filterId }: TimetableGridProps
                     // Calculate position
                     const startHour = parseInt(session.startTime.split(':')[0]);
                     const endHour = parseInt(session.endTime.split(':')[0]);
-                    const topOffset = (startHour - 7) * 96; // 96px is h-24
-                    const height = (endHour - startHour) * 96;
+                    const topOffset = (startHour - 7) * ROW_HEIGHT_PX;
+                    const height = (endHour - startHour) * ROW_HEIGHT_PX;
+
+                    // Parse color classes to get base color for border
+                    const colorClass = unit?.color || "bg-gray-100 text-gray-800 border-gray-200";
+                    // Simplistic extraction of color family for border-l
+                    const baseColor = colorClass.split('-')[1] || 'gray'; 
 
                     return (
                       <div 
                         key={session.id}
                         className={cn(
-                          "absolute w-[95%] left-[2.5%] rounded-md border p-2 text-xs shadow-sm hover:shadow-md transition-all cursor-pointer group overflow-hidden flex flex-col gap-1 print:shadow-none print:border-2",
-                          unit?.color || "bg-gray-100 border-gray-200"
+                          "absolute w-full px-2 py-1.5 text-xs transition-all cursor-pointer group overflow-hidden flex flex-col gap-0.5 hover:z-50 hover:brightness-95",
+                          "border-l-[3px] border-b border-r border-t-0",
+                          colorClass
                         )}
-                        style={{ top: `${topOffset}px`, height: `${height - 4}px` }}
+                        style={{ 
+                          top: `${topOffset}px`, 
+                          height: `${height}px`,
+                          borderColor: `var(--color-${baseColor}-500)` // Use Tailwind var if possible, or rely on the class
+                        }}
                       >
-                        <div className="flex justify-between items-start">
-                          <span className="font-bold font-mono text-[10px] uppercase tracking-wider opacity-80">{unit?.code}</span>
-                          {session.type === 'Lab' && <Badge variant="outline" className="h-4 px-1 text-[9px] bg-white/50 border-white/20">LAB</Badge>}
+                        <div className="flex justify-between items-start mb-0.5">
+                          <span className="font-bold font-mono text-[10px] uppercase tracking-wider opacity-90">{unit?.code}</span>
+                          {session.type === 'Lab' && <span className="font-bold text-[9px] px-1 rounded bg-black/5 uppercase">LAB</span>}
+                          {session.type === 'Exam' && <span className="font-bold text-[9px] px-1 rounded bg-red-500/10 text-red-700 uppercase">EXAM</span>}
                         </div>
                         
-                        <h4 className="font-semibold leading-tight line-clamp-2">{unit?.name}</h4>
+                        <h4 className="font-semibold leading-tight line-clamp-2 text-[11px] mb-auto">{unit?.name}</h4>
                         
-                        <div className="mt-auto space-y-1 opacity-90">
+                        <div className="space-y-0.5 opacity-80 mt-1">
                           <div className="flex items-center gap-1.5 text-[10px]">
-                            <User className="w-3 h-3" />
+                            <User className="w-3 h-3 opacity-70" />
                             <span className="truncate">{lecturer?.name}</span>
                           </div>
                           <div className="flex items-center gap-1.5 text-[10px]">
-                            <MapPin className="w-3 h-3" />
-                            <span className="truncate">{venue?.name}</span>
+                            <MapPin className="w-3 h-3 opacity-70" />
+                            <span className="truncate font-medium">{venue?.name}</span>
                           </div>
-                           {/* Conflict Indicator (Mock) */}
+                           {/* Conflict Indicator */}
                            {session.id === 's8' && (
-                             <div className="flex items-center gap-1 text-red-600 font-bold bg-red-50 p-1 rounded mt-1 animate-pulse">
+                             <div className="flex items-center gap-1 text-red-600 font-bold bg-red-50/80 p-0.5 rounded animate-pulse w-fit mt-0.5">
                                <AlertCircle className="w-3 h-3" />
-                               <span>CONFLICT</span>
+                               <span className="text-[9px]">CLASH</span>
                              </div>
                            )}
                         </div>
