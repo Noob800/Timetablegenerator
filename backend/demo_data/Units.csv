@@ -1,0 +1,323 @@
+code,name,credit_hours,lecture_hours,lab_hours,tutorial_hours,program_groups
+2M2BIO 101,2M2BIO 101,3,2,0,0,GEN-Y1
+2M2EDB 211//PHRM 2,2M2EDB 211//PHRM 2,3,2,3,0,GEN-Y1
+2M2EDB 211//PHRM 222,2M2EDB 211//PHRM 222,3,2,3,0,GEN-Y1
+9THEO 069/DCCM 06,9THEO 069/DCCM 06,3,3,0,0,ALL-Y1
+9THEO 205/REST 121,9THEO 205/REST 121,3,3,0,0,ALL-Y1
+ACCT 112,Introduction to Accounting,3,2,0,0,ACCT-Y1
+ACCT 117,Introduction to Accounting,3,2,0,0,ACCT-Y1
+ACCT 219,Intermediate Accounting,3,2,0,0,ACCT-Y2
+ACCT 431,Special Topics in Accounting,4,2,0,0,ACCT-Y4
+ACCT 433,Special Topics in Accounting,4,2,0,0,ACCT-Y4
+AGEC 111,Introduction to Agricultural Economics,3,2,0,0,GEN-Y1
+AGEC 313,Advanced Agricultural Economics,3,2,0,0,GEN-Y3
+AGRI 101,Introduction to Agriculture,3,2,2,0,AGRIC-Y1
+AGRI 102,Introduction to Agriculture,3,2,2,0,AGRIC-Y1
+AGSM 326,Advanced AGSM,3,2,0,0,GEN-Y3
+AGTE 321,Advanced Agricultural Technology,3,2,0,0,GEN-Y3
+AGTE 323,Advanced Agricultural Technology,3,2,0,0,GEN-Y3
+ANSC 250,Intermediate Animal Science,3,2,2,0,AGRIC-Y2
+ANSC 251,Intermediate Animal Science,3,2,2,0,AGRIC-Y2
+ANSC 351,Advanced Animal Science,3,2,2,0,AGRIC-Y3
+ANSC 353,Advanced Animal Science,3,2,2,0,AGRIC-Y3
+BBIT 111/CISY 101/MISC 116,Introduction to Business Information Technology,3,2,3,0,BBIT-Y1
+BBIT 112/CISY 201,Introduction to Business Information Technology,3,2,3,0,BBIT-Y1
+BBIT 121/CISY 110,Introduction to Business Information Technology,3,2,3,0,BBIT-Y1
+BBIT 121/CISY 110/COMP 110,Introduction to Business Information Technology,3,2,3,0,BBIT-Y1
+BBIT 222/CISY 111/COMP 111,Intermediate Business Information Technology,3,2,3,0,BBIT-Y2
+BBIT 316/CISY 302,Advanced Business Information Technology,3,2,3,0,BBIT-Y3
+BBIT 417/CISY 403,Special Topics in Business Information Technology,4,2,3,0,BBIT-Y4
+BBIT 438/CISY 421/MISC 322,Special Topics in Business Information Technology,4,2,3,0,BBIT-Y4
+BBIT 446/CISY 332,Special Topics in Business Information Technology,4,2,3,0,BBIT-Y4
+BIOC 201,Intermediate BIOC,3,2,0,0,GEN-Y2
+BIOC/HSCI 301,Advanced BIOC,3,2,0,0,GEN-Y3
+BIOL 230,Intermediate Biology,3,2,3,0,BIO-Y2
+BIOL 310,Advanced Biology,3,2,3,0,BIO-Y3
+BIOL 330,Advanced Biology,3,2,3,0,BIO-Y3
+BIOL 425,Special Topics in Biology,4,2,3,0,BIO-Y4
+BIOL 426,Special Topics in Biology,4,2,3,0,BIO-Y4
+BIOL 427,Special Topics in Biology,4,2,3,0,BIO-Y4
+BOTN 101,Introduction to Botany,3,2,0,0,GEN-Y1
+BOTN 201,Intermediate Botany,3,2,0,0,GEN-Y2
+BOTN 205,Intermediate Botany,3,2,0,0,GEN-Y2
+BSCM 111,Introduction to Biological Sciences,3,2,0,0,GEN-Y1
+BSCM 112,Introduction to Biological Sciences,3,2,0,0,GEN-Y1
+BSCM 123,Introduction to Biological Sciences,3,2,0,0,GEN-Y1
+BSCM 210,Intermediate Biological Sciences,3,2,0,0,GEN-Y2
+BSCM 212,Intermediate Biological Sciences,3,2,3,0,GEN-Y2
+BSCM 213 3HRS,Intermediate Biological Sciences,3,2,0,0,GEN-Y2
+BSCM 214,Intermediate Biological Sciences,3,2,0,0,GEN-Y2
+BSCM 215,Intermediate Biological Sciences,3,2,0,0,GEN-Y2
+BSCM 310,Advanced Biological Sciences,3,2,0,0,GEN-Y3
+BSCM 311,Advanced Biological Sciences,3,2,0,0,GEN-Y3
+BSCM 312,Advanced Biological Sciences,3,2,0,0,GEN-Y3
+BSCM 312 KANAKE,Advanced Biological Sciences,3,2,0,0,GEN-Y3
+BSCM 313,Advanced Biological Sciences,3,2,0,0,GEN-Y3
+BUSS 100,Introduction to Business,3,2,0,0,BUSS-Y1
+BUSS 212,Intermediate Business,3,2,0,0,BUSS-Y2
+BUSS 221,Intermediate Business,3,2,0,0,BUSS-Y2
+BUSS 326,Advanced Business,3,2,0,0,BUSS-Y3
+BUSS 327,Advanced Business,3,2,0,0,BUSS-Y3
+BUSS 342,Advanced Business,3,2,0,0,BUSS-Y3
+BUSS 426,Special Topics in Business,4,2,0,0,BUSS-Y4
+BUSS100,Introduction to Business,3,2,0,0,BUSS-Y1
+CE D1U14C/ 1E2D2U/CE D2U14C 014/EDUC 114/EDUC 214,Introduction to CE,3,3,0,0,GEN-Y1
+CHEM 101,Introduction to Chemistry,3,2,3,0,CHEM-Y1
+CHEM 212,Intermediate Chemistry,3,2,3,0,CHEM-Y2
+CHEM 214,Intermediate Chemistry,3,2,3,0,CHEM-Y2
+CHEM 313,Advanced Chemistry,3,2,3,0,CHEM-Y3
+CHEM 314,Advanced Chemistry,3,2,3,0,CHEM-Y3
+CHEM 321,Advanced Chemistry,3,2,3,0,CHEM-Y3
+CHEM 410,Special Topics in Chemistry,4,2,3,0,CHEM-Y4
+CHEM 412,Special Topics in Chemistry,4,2,3,0,CHEM-Y4
+CISY 303,Advanced Computer Information Systems,3,2,3,0,IT-Y3
+CLEANING,CLEANING,3,2,0,0,GEN-Y1
+COMM 111,Introduction to Communication,3,2,0,1,ALL-Y1
+COMP 100,Introduction to Computer Science,3,2,3,0,CS-Y1
+COSM 326,Advanced Physical Science,3,2,0,0,GEN-Y3
+COUN 100/SOST 136,Introduction to Counseling,3,2,0,0,PSYCH-Y1
+COUN 115,Introduction to Counseling,3,2,0,0,PSYCH-Y1
+COUN 125,Introduction to Counseling,3,2,0,0,PSYCH-Y1
+COUN 325,Advanced Counseling,3,2,0,0,PSYCH-Y3
+COUN 355,Advanced Counseling,3,2,0,0,PSYCH-Y3
+COUN 404,Special Topics in Counseling,4,2,0,0,PSYCH-Y4
+CROP 245,Intermediate Crop Science,3,2,2,0,AGRIC-Y2
+CROP 341,Advanced Crop Science,3,2,2,0,AGRIC-Y3
+DBIT 126/DCIS 107,Introduction to DBIT,3,2,0,0,GEN-Y1
+DCIS 207/DBIT 227,Intermediate DCIS,3,2,0,0,GEN-Y2
+DICM 111,Introduction to Communication,3,2,0,0,GEN-Y1
+DICM 112,Introduction to Communication,3,2,0,0,GEN-Y1
+DICM 113,Introduction to Communication,3,2,0,0,GEN-Y1
+DICM 133,Introduction to Communication,3,2,0,0,GEN-Y1
+DICM 211,Intermediate Communication,3,2,0,0,GEN-Y2
+DICM 212,Intermediate Communication,3,2,0,0,GEN-Y2
+DICM 213,Intermediate Communication,3,2,0,0,GEN-Y2
+DICM 214,Intermediate Communication,3,2,0,0,GEN-Y2
+DICM 215,Intermediate Communication,3,2,0,0,GEN-Y2
+DICM 216,Intermediate Communication,3,2,0,0,GEN-Y2
+DICM 217,Intermediate Communication,3,2,0,0,GEN-Y2
+DICM 311,Advanced Communication,3,2,0,0,GEN-Y3
+DICM 317,Advanced Communication,3,2,0,0,GEN-Y3
+DPCP 910,Special Topics in Counseling Psychology,4,2,0,0,GEN-Y4
+DPHT 020,Introduction to DPHT,3,2,0,0,GEN-Y1
+DPHT 021,Introduction to DPHT,3,2,0,0,GEN-Y1
+DPHT 022,Introduction to DPHT,3,2,3,0,GEN-Y1
+DPRS 905,Special Topics in Religious Studies,4,2,0,0,GEN-Y4
+ECON 101,Introduction to Economics,3,2,0,0,ECON-Y1
+ECON 102,Introduction to Economics,3,2,0,0,ECON-Y1
+EDUC 111,Introduction to Education,3,3,0,0,EDUC-Y1
+EDUC 112,Introduction to Education,3,3,0,0,EDUC-Y1
+EDUC 114,Introduction to Education,3,3,0,0,EDUC-Y1
+EDUC 115/016,Introduction to Education,3,2,3,0,EDUC-Y1
+EDUC 122/EDUC 014/EDU,Introduction to Education,3,3,0,0,EDUC-Y1
+EKSL 350,Advanced EKSL,3,2,0,0,GEN-Y3
+EKSM 326,Advanced Environmental Studies,3,2,0,0,GEN-Y3
+ENGL 111,Introduction to ENGL,3,2,0,1,ALL-Y1
+ENGL 213,Intermediate ENGL,3,2,0,1,GEN-Y2
+ENGL 413,Special Topics in ENGL,4,2,0,1,GEN-Y4
+ENSM 326,Advanced ENSM,3,2,0,0,GEN-Y3
+ENTRE 430,Special Topics in Entrepreneurship,4,2,0,0,GEN-Y4
+ENTRE 435,Special Topics in Entrepreneurship,4,2,0,0,GEN-Y4
+ENVI 201,Intermediate Environmental Science,3,2,0,0,ENV-Y2
+ETRE 435,Special Topics in Entrepreneurship,4,2,0,0,GEN-Y4
+FINA 431,Special Topics in Finance,4,2,0,0,FIN-Y4
+FINA 433,Special Topics in Finance,4,2,0,0,FIN-Y4
+GAMES AND SPORTS,GAMES AND SPORTS,3,2,0,0,GEN-Y1
+GEOG 111,Introduction to Geography,3,3,0,0,GEO-Y1
+GEOG 312,Advanced Geography,3,2,3,0,GEO-Y3
+GEOG 321,Advanced Geography,3,3,0,0,GEO-Y3
+GEOG 322,Advanced Geography,3,3,0,0,GEO-Y3
+GEOG 412,Special Topics in Geography,4,3,0,0,GEO-Y4
+GEOG 413/021,Special Topics in Geography,4,3,0,0,GEO-Y4
+GESM 326,Advanced General Studies,3,2,0,0,GEN-Y3
+HISM 326,Advanced HISM,3,2,0,0,GEN-Y3
+HIST 111,Introduction to History,3,3,0,0,HIST-Y1
+HIST 211,Intermediate History,3,3,0,0,HIST-Y2
+HIST 311,Advanced History,3,3,0,0,HIST-Y3
+HIST 312,Advanced History,3,3,0,0,HIST-Y3
+HIST 321,Advanced History,3,3,0,0,HIST-Y3
+HIST 411,Special Topics in History,4,3,0,0,HIST-Y4
+HIST 412,Special Topics in History,4,3,0,0,HIST-Y4
+HRMG 220,Intermediate Human Resource Management,3,2,0,0,BUSS-Y2
+HRMG 334,Advanced Human Resource Management,3,2,0,0,BUSS-Y3
+HRMG 335,Advanced Human Resource Management,3,2,0,0,BUSS-Y3
+HRMG335,Advanced Human Resource Management,3,2,0,0,BUSS-Y3
+HSCI 103,Introduction to HSCI,3,2,0,0,GEN-Y1
+HSCI 104,Introduction to HSCI,3,2,0,0,GEN-Y1
+HSCI 105,Introduction to HSCI,3,2,3,0,GEN-Y1
+HSCI 107,Introduction to HSCI,3,2,0,0,GEN-Y1
+HSCI 108,Introduction to HSCI,3,2,0,0,GEN-Y1
+HSCI 205,Intermediate HSCI,3,2,0,0,GEN-Y2
+HSCI 210,Intermediate HSCI,3,2,0,0,GEN-Y2
+HSCI 225,Intermediate HSCI,3,2,0,0,GEN-Y2
+HSCI 310,Advanced HSCI,3,2,0,0,GEN-Y3
+HSMU 111(N1),Introduction to HSMU,3,2,0,0,GEN-Y1
+Inonda,Inonda,3,2,0,0,GEN-Y1
+KISM 326,Advanced Information Studies,3,2,0,0,GEN-Y3
+KISW 111,Introduction to Kiswahili,3,2,0,1,GEN-Y1
+KISW 316,Advanced Kiswahili,3,2,0,1,GEN-Y3
+KISW 323,Advanced Kiswahili,3,2,0,1,GEN-Y3
+KISW 413/KISW 311,Special Topics in Kiswahili,4,2,0,1,GEN-Y4
+KISW 421,Special Topics in Kiswahili,4,2,0,1,GEN-Y4
+KISW 422,Special Topics in Kiswahili,4,2,0,1,GEN-Y4
+LITT 313,Advanced LITT,3,2,0,0,GEN-Y3
+LITT 314,Advanced LITT,3,2,0,0,GEN-Y3
+M3EDB 223/PHRM 23,Introduction to M,3,2,3,0,GEN-Y1
+M3EDB 231,Introduction to M,3,2,0,0,GEN-Y1
+MACP 802,Special Topics in Counseling Psychology,4,2,0,0,GEN-Y4
+MARS 805,Special Topics in Marine Science,4,2,0,0,GEN-Y4
+MARS 806,Special Topics in Marine Science,4,2,0,0,GEN-Y4
+MASM 326,Advanced Mathematics,3,2,3,0,GEN-Y3
+MATH 102,Introduction to Mathematics,3,2,0,1,ALL-Y1
+MATH 104,Introduction to Mathematics,3,2,3,1,ALL-Y1
+MATH 110,Introduction to Mathematics,3,2,0,1,ALL-Y1
+MATH 130,Introduction to Mathematics,3,2,0,1,ALL-Y1
+MATH 132,Introduction to Mathematics,3,2,0,1,ALL-Y1
+MATH 210,Intermediate Mathematics,3,2,0,1,MATH-Y2
+MATH 211,Intermediate Mathematics,3,2,0,1,MATH-Y2
+MATH 221,Intermediate Mathematics,3,2,0,1,MATH-Y2
+MATH 230,Intermediate Mathematics,3,2,0,1,MATH-Y2
+MATH 231,Intermediate Mathematics,3,2,0,1,MATH-Y2
+MATH 310,Advanced Mathematics,3,2,3,1,MATH-Y3
+MATH 320,Advanced Mathematics,3,2,0,1,MATH-Y3
+MATH 330/331,Advanced Mathematics,3,2,0,1,MATH-Y3
+MATH 331,Advanced Mathematics,3,2,0,1,MATH-Y3
+MBI 410,Special Topics in MBI,4,2,0,0,GEN-Y4
+MBIO 101,Introduction to Microbiology,3,2,3,0,MED-Y1
+MBIO 325,Advanced Microbiology,3,2,3,0,MED-Y3
+MBIO 410,Special Topics in Microbiology,4,2,3,0,MED-Y4
+MBIO 415,Special Topics in Microbiology,4,2,3,0,MED-Y4
+MBIO 435,Special Topics in Microbiology,4,2,3,0,MED-Y4
+MBIO 440,Special Topics in Microbiology,4,2,3,0,MED-Y4
+MBURUGU,MBURUGU,3,2,0,0,GEN-Y1
+MEDB 111(N1),Introduction to Medical Biochemistry,3,2,3,0,MED-Y1
+MEDB 121,Introduction to Medical Biochemistry,3,2,3,0,MED-Y1
+MEDB 122,Introduction to Medical Biochemistry,3,2,3,0,MED-Y1
+MEDB 123,Introduction to Medical Biochemistry,3,2,3,0,MED-Y1
+MEDB 124,Introduction to Medical Biochemistry,3,2,3,0,MED-Y1
+MEDB 211//PHRM 2,Intermediate Medical Biochemistry,3,2,3,0,MED-Y2
+MEDB 213(N1),Intermediate Medical Biochemistry,3,2,3,0,MED-Y2
+MEDB 222(N1),Intermediate Medical Biochemistry,3,2,3,0,MED-Y2
+MEDB 223,Intermediate Medical Biochemistry,3,2,3,0,MED-Y2
+MEDB 223/PHRM 22,Intermediate Medical Biochemistry,3,2,3,0,MED-Y2
+MEDB 223/PHRM 223,Intermediate Medical Biochemistry,3,2,3,0,MED-Y2
+MEDB 223/PHRM 224,Intermediate Medical Biochemistry,3,2,3,0,MED-Y2
+MEDB 223/PHRM 225,Intermediate Medical Biochemistry,3,2,3,0,MED-Y2
+MEDB 225,Intermediate Medical Biochemistry,3,2,3,0,MED-Y2
+MEDB 231,Intermediate Medical Biochemistry,3,2,3,0,MED-Y2
+MEDB 232,Intermediate Medical Biochemistry,3,2,3,0,MED-Y2
+MEDB 233,Intermediate Medical Biochemistry,3,2,3,0,MED-Y2
+MEDB 234(N1),Intermediate Medical Biochemistry,3,2,3,0,MED-Y2
+MEDB 335,Advanced Medical Biochemistry,3,2,3,0,MED-Y3
+MEDC 311,Advanced MEDC,3,2,0,0,GEN-Y3
+MEDM 233(N1),Intermediate MEDM,3,2,0,0,GEN-Y2
+MEDP 314,Advanced MEDP,3,2,0,0,GEN-Y3
+MEDP 316,Advanced MEDP,3,2,0,0,GEN-Y3
+MEDP 322,Advanced MEDP,3,2,0,0,GEN-Y3
+MEKBSUL R3U50GU,Introduction to MEKBSUL,3,2,0,0,GEN-Y1
+MKTG 430,Special Topics in Marketing,4,2,0,0,BUSS-Y4
+MLSC 101,Introduction to Medical Laboratory Science,3,2,3,0,MED-Y1
+MLSC 111,Introduction to Medical Laboratory Science,3,2,3,0,MED-Y1
+MLSC 201,Intermediate Medical Laboratory Science,3,2,3,0,MED-Y2
+MLSC 400,Special Topics in Medical Laboratory Science,4,2,3,0,MED-Y4
+MLSC 403,Special Topics in Medical Laboratory Science,4,2,3,0,MED-Y4
+MLSC 406,Special Topics in Medical Laboratory Science,4,2,3,0,MED-Y4
+MLSC 407,Special Topics in Medical Laboratory Science,4,2,3,0,MED-Y4
+MLSC 409,Special Topics in Medical Laboratory Science,4,2,3,0,MED-Y4
+MPHBRUMR U5G13U,Introduction to MPHBRUMR,3,2,0,0,GEN-Y1
+MPHBRUMR U5G16U,Introduction to MPHBRUMR,3,2,0,0,GEN-Y1
+MTEO 500,Special Topics in Theology,4,2,0,0,GEN-Y4
+NRSG 111,Introduction to NRSG,3,2,0,0,GEN-Y1
+NRSG 121,Introduction to NRSG,3,2,3,0,GEN-Y1
+NRSG 131,Introduction to NRSG,3,2,0,0,GEN-Y1
+NRSG 215,Intermediate NRSG,3,2,0,0,GEN-Y2
+NRSG 232,Intermediate NRSG,3,2,0,0,GEN-Y2
+NRSG 233,Intermediate NRSG,3,2,0,0,GEN-Y2
+NRSG 343,Advanced NRSG,3,2,0,0,GEN-Y3
+NRSG 344,Advanced NRSG,3,2,0,0,GEN-Y3
+NRSG 353,Advanced NRSG,3,2,0,0,GEN-Y3
+NRSG 361,Advanced NRSG,3,2,0,0,GEN-Y3
+NRSG 362,Advanced NRSG,3,2,0,0,GEN-Y3
+NRSG 364,Advanced NRSG,3,2,0,0,GEN-Y3
+NRSG 418,Special Topics in NRSG,4,2,0,0,GEN-Y4
+NRSG 466,Special Topics in NRSG,4,2,0,0,GEN-Y4
+NRSG 471,Special Topics in NRSG,4,2,0,0,GEN-Y4
+OFAM 432,Special Topics in Office Management,4,2,0,0,GEN-Y4
+PESM 326,Advanced PESM,3,2,0,0,GEN-Y3
+PHAR 534,Special Topics in PHAR,4,2,0,0,GEN-Y4
+PHED 100,Introduction to Physical Education,3,2,0,0,EDUC-Y1
+PHED 105,Introduction to Physical Education,3,2,0,0,EDUC-Y1
+PHED 400,Special Topics in Physical Education,4,2,0,0,EDUC-Y4
+PHRM 311,Advanced Pharmacy,3,2,3,0,PHRM-Y3
+PHRM 312,Advanced Pharmacy,3,2,3,0,PHRM-Y3
+PHRM 313,Advanced Pharmacy,3,2,3,0,PHRM-Y3
+PHRM 314,Advanced Pharmacy,3,2,3,0,PHRM-Y3
+PHRM 336,Advanced Pharmacy,3,2,3,0,PHRM-Y3
+PHRM 410,Special Topics in Pharmacy,4,2,3,0,PHRM-Y4
+PHRM 412,Special Topics in Pharmacy,4,2,3,0,PHRM-Y4
+PHRM 413,Special Topics in Pharmacy,4,2,3,0,PHRM-Y4
+PHRM 414,Special Topics in Pharmacy,4,2,3,0,PHRM-Y4
+PHRM 415,Special Topics in Pharmacy,4,2,3,0,PHRM-Y4
+PHRM 511,Special Topics in Pharmacy,4,2,3,0,PHRM-Y4
+PHRM 512,Special Topics in Pharmacy,4,2,3,0,PHRM-Y4
+PHRM 513,Special Topics in Pharmacy,4,2,3,0,PHRM-Y4
+PHRM 514,Special Topics in Pharmacy,4,2,3,0,PHRM-Y4
+PHRM 515,Special Topics in Pharmacy,4,2,3,0,PHRM-Y4
+PHRM 516,Special Topics in Pharmacy,4,2,3,0,PHRM-Y4
+PHRM 534(N1),Special Topics in Pharmacy,4,2,3,0,PHRM-Y4
+PHSM 326,Advanced Physical Science,3,2,0,0,GEN-Y3
+PHYS 100,Introduction to Physics,3,2,3,0,PHYS-Y1
+PHYS 102,Introduction to Physics,3,2,3,0,PHYS-Y1
+PHYS 201,Intermediate Physics,3,2,3,0,PHYS-Y2
+PHYS 203,Intermediate Physics,3,2,3,0,PHYS-Y2
+PHYS 205,Intermediate Physics,3,2,3,0,PHYS-Y2
+PHYS 210,Intermediate Physics,3,2,3,0,PHYS-Y2
+PHYS 300,Advanced Physics,3,2,3,0,PHYS-Y3
+PHYS 302,Advanced Physics,3,2,3,0,PHYS-Y3
+PHYS 406,Special Topics in Physics,4,2,3,0,PHYS-Y4
+PHYS 411,Special Topics in Physics,4,2,3,0,PHYS-Y4
+PMGT 333,Advanced Project Management,3,2,0,0,BUSS-Y3
+PMGT 430,Special Topics in Project Management,4,2,0,0,BUSS-Y4
+PSCM 210,Intermediate Public Relations,3,2,0,0,BUSS-Y2
+PSCM 332,Advanced Public Relations,3,2,0,0,BUSS-Y3
+PSCM 333,Advanced Public Relations,3,2,0,0,BUSS-Y3
+RESM 326,Advanced RESM,3,2,0,0,GEN-Y3
+REST 111,Introduction to Religious Studies,3,3,0,0,THEO-Y1
+REST 413/THE 116,Special Topics in Religious Studies,4,3,0,0,THEO-Y4
+REV. NCEBERE,REV. NCEBERE,3,2,0,0,GEN-Y1
+SOST 131,Introduction to Social Studies,3,2,0,0,GEN-Y1
+SOST 138,Introduction to Social Studies,3,2,0,0,GEN-Y1
+SOWA 331,Advanced Soil and Water,3,2,0,0,GEN-Y3
+STAT 113,Introduction to Statistics,3,2,0,1,STAT-Y1
+THEO /DCCM 089,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 050/099/392,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 051/003/DCCM 051/CCMI 008,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 054,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 056,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 060,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 063,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 069/DCCM 06,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 071,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 082,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 111,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 112/REST,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 112/REST 222,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 113/REST,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 113/REST 312,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 114,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 121,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 124,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 126,Introduction to Theology,3,3,0,0,ALL-Y1
+THEO 205/REST,Intermediate Theology,3,3,0,0,THEO-Y2
+THEO 301,Advanced Theology,3,3,0,0,THEO-Y3
+THEO 305/REST 212,Advanced Theology,3,3,0,0,THEO-Y3
+THEO 317/REST 422,Advanced Theology,3,3,0,0,THEO-Y3
+THEO 319,Advanced Theology,3,3,0,0,THEO-Y3
+THEO 406,Special Topics in Theology,4,3,0,0,THEO-Y4
+ZOOL 102,Introduction to Zoology,3,2,0,0,GEN-Y1
+i DICM 216,Intermediate I,3,2,0,0,GEN-Y2
+i DPHT 022,Introduction to I,3,2,0,0,GEN-Y1
+n NRSG 418,Special Topics in N,4,2,0,0,GEN-Y4
+o PSCM 333,Advanced O,3,2,0,0,GEN-Y3
+o o,o o,3,2,0,0,GEN-Y1
+v PHRM 511,Special Topics in V,4,2,3,0,GEN-Y4

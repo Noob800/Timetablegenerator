@@ -1,0 +1,149 @@
+name,department,email,max_hours_per_week,availability
+REV. James,Theology,james@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Saturday,Sunday"
+REV. NCEBERE,Theology,ncebere@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday"
+Dr Rose,Biology,rose@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday"
+Eric Mwenda,Education,e.mwenda@university.edu,16,"Monday,Wednesday,Thursday,Friday,Saturday,Sunday"
+Mawira,Mathematics,mawira@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"
+Dr. Ncene,Animal Science,ncene@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Sunday"
+Moraa,Microbiology,moraa@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"
+Dr Gachoka,Biology,gachoka@university.edu,16,"Tuesday,Wednesday,Thursday,Friday,Saturday"
+Dr Muchiri,Microbiology,muchiri@university.edu,16,"Monday,Tuesday,Thursday,Friday,Saturday,Sunday"
+REV. DR. MBURUGU,Theology,mburugu@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday"
+ROSE MURIIKI,Business,r.muriiki@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday"
+RUTH KANYARU,Business,r.kanyaru@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday"
+Dr. David M. M,Agricultural Technology,d.m@university.edu,16,"Tuesday,Wednesday,Thursday,Friday"
+GRACE M,Business,g.m@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday"
+Dr Flora Mutwiri,Geography,f.mutwiri@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"
+MUTEA FM,Accounting,m.fm@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday"
+Dr Mbinji,Pharmacy,mbinji@university.edu,16,"Monday,Tuesday,Wednesday,Saturday,Sunday"
+Dr. Impwii,Animal Science,impwii@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Saturday,Sunday"
+Dr Severina M,Geography,s.m@university.edu,16,"Monday,Tuesday,Thursday,Friday,Saturday,Sunday"
+Hellen M. Nyaga,Agriculture,h.nyaga@university.edu,16,"Monday,Wednesday,Thursday,Friday"
+PROF MWITI,Counseling,mwiti@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday"
+Mr. Kimathi,Mathematics,kimathi@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"
+Dr Jatani,Physics,jatani@university.edu,16,"Monday,Tuesday,Thursday,Friday"
+KAJE DAVID,Computer Science,k.david@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday"
+Josephine Kanini,Information Systems,j.kanini@university.edu,16,"Wednesday,Thursday,Friday,Saturday,Sunday"
+MUTEA,Mathematics,mutea@university.edu,16,"Monday,Tuesday,Thursday,Friday"
+DR CHESIGOR,Marketing,chesigor@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"
+SUSAN K,Accounting,s.k@university.edu,16,"Monday,Tuesday,Thursday,Friday,Saturday,Sunday"
+Dr. Jane Marete,Education,j.marete@university.edu,16,"Monday,Tuesday,Saturday,Sunday"
+Dr Kubai J,Physical Education,k.j@university.edu,16,"Monday,Tuesday,Wednesday"
+PROF KEN,Statistics,ken@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"
+Dr Kigo J,Physics,k.j@university.edu,16,"Monday,Tuesday,Sunday"
+Dr Ratumo,Chemistry,ratumo@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"
+Dr Mwenda,Chemistry,mwenda@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Saturday,Sunday"
+Herbet Kibebe,Medical Laboratory Sciences,h.kibebe@university.edu,16,"Monday,Tuesday"
+WAWERU PETER,Computer Science,w.peter@university.edu,16,"Monday,Wednesday,Thursday"
+REV. DR. Mary,Theology,mary@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"
+Dr Sarah Mungai,Mathematics,s.mungai@university.edu,16,"Monday,Wednesday,Thursday,Friday,Saturday,Sunday"
+Dr. John Muchiri,Microbiology,j.muchiri@university.edu,16,"Monday,Sunday"
+Dr Rebecca Wachira,Social Studies,r.wachira@university.edu,16,"Wednesday,Thursday"
+Dr James Kubai,Physical Education,j.kubai@university.edu,16,"Monday,Tuesday,Sunday"
+Dr. Jatan Ungula,Physics,j.ungula@university.edu,16,"Monday,Tuesday,Friday,Saturday,Sunday"
+REV. DR.,Theology,unknown@university.edu,16,"Tuesday,Thursday,Saturday"
+Mr. James Mawira M,Mathematics,j.m@university.edu,16,Thursday
+Dr. David M. M.,Crop Science,d.m.@university.edu,16,"Monday,Wednesday"
+iDr. Jane Marete,Counseling,i.marete@university.edu,16,Monday
+Ms. Ondari Dinah M,Microbiology,o.m@university.edu,16,Sunday
+"o
+Dr James Kubai",Physical Education,o.kubai@university.edu,16,Tuesday
+PAULINE,General Studies,pauline@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday"
+Martin Koome,Agricultural Economics,m.koome@university.edu,16,"Tuesday,Wednesday,Thursday,Friday,Saturday"
+oMrasa. Ondari Dinah Moraa,Microbiology,o.moraa@university.edu,16,Monday
+Mr. Kimathi Murung,Mathematics,k.murung@university.edu,16,"Friday,Sunday"
+uMgarm. Jbaimes Mawira,Mathematics,u.mawira@university.edu,16,Friday
+KIVUVA,General Studies,kivuva@university.edu,16,"Monday,Tuesday,Wednesday,Thursday"
+GITHAE,General Studies,githae@university.edu,16,"Tuesday,Wednesday,Thursday,Friday"
+Dr. Josephat Kariru,Physics,j.kariru@university.edu,16,Monday
+Dr Kibaara T,History,k.t@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday"
+Dr Ungula,Physics,ungula@university.edu,16,"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday"
+Dr. Josephat Kariru Kigo,Physics,j.kigo@university.edu,16,Monday
+Dr Jacinta Magaju,Kiswahili,j.magaju@university.edu,16,"Monday,Tuesday,Wednesday"
+Benjamin Mwawasi,General Studies,b.mwawasi@university.edu,16,"Monday,Tuesday,Wednesday,Thursday"
+Dr Sabina Murithi,Education,s.murithi@university.edu,16,"Monday,Tuesday,Saturday,Sunday"
+DR RINTARI,Business,rintari@university.edu,16,"Thursday,Friday"
+ANAT.DPT,General Studies,anat.dpt@university.edu,16,"Wednesday,Thursday"
+Dr Obuya,Pharmacy,obuya@university.edu,16,"Monday,Friday,Saturday"
+MEDICINE BRIAN,Communication,m.brian@university.edu,16,"Friday,Saturday"
+DR Jediel,Chemistry,jediel@university.edu,16,"Monday,Thursday,Friday,Saturday,Sunday"
+Mrs. Rose Munene,Botany,s.munene@university.edu,16,"Monday,Saturday,Sunday"
+ANONDO TIMOTHY,Computer Science,a.timothy@university.edu,16,"Tuesday,Friday"
+RE. DR. ALICE M,Theology,r.m@university.edu,16,"Monday,Tuesday,Wednesday,Thursday"
+Dr Charles Kanyi,General Studies,c.kanyi@university.edu,16,"Monday,Friday,Saturday,Sunday"
+Dr Kigo,Physics,kigo@university.edu,16,"Monday,Thursday,Friday,Saturday"
+oDkra. Kennedy K. Gach,Biology,o.gach@university.edu,16,Monday
+oDkra. Kennedy K. Gachoka,Biology,o.gachoka@university.edu,16,Tuesday
+Dr. Kennedy K. Gach,Biology,k.gach@university.edu,16,Sunday
+KDigro. Josephat Kariru,Physics,k.kariru@university.edu,16,Tuesday
+RUTHKANYARU,Human Resource Management,ruthkanyaru@university.edu,16,Tuesday
+REV. DR. Alice,Theology,alice@university.edu,16,"Monday,Tuesday,Sunday"
+MMugr.a Kmimbiathi Murungi,Mathematics,m.murungi@university.edu,16,Saturday
+"REV, DR.",Theology,",@university.edu",16,Thursday
+Dr. Josephat Kigo,Physics,j.kigo@university.edu,16,"Monday,Saturday,Sunday"
+1R2E1V. James,Theology,1.james@university.edu,16,Friday
+"e
+REV. James",Theology,e.james@university.edu,16,Tuesday
+"REV. DR, ALICE M",Theology,",.m@university.edu",16,"Monday,Saturday,Sunday"
+Dr T Kibaara,History,t.kibaara@university.edu,16,"Thursday,Friday"
+iDar Severina Mwirichia,Geography,i.mwirichia@university.edu,16,Wednesday
+Dr Sabina Muriithi,General Studies,s.muriithi@university.edu,16,"Monday,Tuesday,Wednesday"
+Dr. Rebecca WachiraDr. Rebecca WachiraDr. Rebecca Wachira,Counseling,r.wachira@university.edu,16,Saturday
+MUTEA.,Accounting,mutea.@university.edu,16,Wednesday
+Dr Severina Mwirich,Geography,s.mwirich@university.edu,16,Monday
+iDar Severina Mwirich,Geography,i.mwirich@university.edu,16,Tuesday
+RPROF KEN,Statistics,r.ken@university.edu,16,Monday
+SUSAN .K,Finance,s..k@university.edu,16,Thursday
+SUSAN. K,Finance,s.k@university.edu,16,Friday
+2R2E2V. NCEBERE,Theology,2.ncebere@university.edu,16,Friday
+REV.NCEBERE,Marine Sciences,ncebere@university.edu,16,"Thursday,Friday"
+JENU JOHN,General Studies,j.john@university.edu,16,Saturday
+ANAT.DPRT,General Studies,anat.dprt@university.edu,16,Tuesday
+MIRIAM O,General Studies,m.o@university.edu,16,"Tuesday,Wednesday,Thursday,Friday"
+Stephen W,Medical Laboratory Sciences,s.w@university.edu,16,"Monday,Tuesday"
+3R1E2V. NCEBERE,Theology,3.ncebere@university.edu,16,Friday
+Ann Mukiri,Environmental Science,a.mukiri@university.edu,16,"Monday,Tuesday,Wednesday"
+LAURENZIA,General Studies,laurenzia@university.edu,16,"Monday,Tuesday,Wednesday"
+DR. HARSHIKA,General Studies,harshika@university.edu,16,Monday
+DR KOIGI,General Studies,koigi@university.edu,16,"Monday,Tuesday"
+"DR, HARSHIKA",General Studies,",.harshika@university.edu",16,Tuesday
+Inonda,General Studies,inonda@university.edu,16,"Saturday,Sunday"
+Mr. James Mawira,Mathematics,j.mawira@university.edu,16,"Tuesday,Wednesday,Thursday"
+MS. Grace Wambui,Mathematics,g.wambui@university.edu,16,Saturday
+MMwSa. nGgriace Wambui,Mathematics,m.wambui@university.edu,16,Sunday
+MMwSa. nGgriace Wambui Mwangi,Mathematics,m.mwangi@university.edu,16,Monday
+IRENE,General Studies,irene@university.edu,16,"Thursday,Friday,Saturday,Sunday"
+RUTH K,Human Resource Management,r.k@university.edu,16,Thursday
+RIUTH KANYARU,Business,r.kanyaru@university.edu,16,Monday
+JULIAN,General Studies,julian@university.edu,16,"Thursday,Friday,Saturday"
+"t
+ROSE MURIIKI",Business,t.muriiki@university.edu,16,Tuesday
+WERU/NJERU,General Studies,weru/njeru@university.edu,16,"Monday,Tuesday,Wednesday,Thursday"
+"e
+GITHAE",General Studies,e.githae@university.edu,16,Monday
+GLORY,General Studies,glory@university.edu,16,"Monday,Tuesday,Sunday"
+"REV, DR. MBURUGU",Theology,",.mburugu@university.edu",16,Friday
+ANAT. DPT,General Studies,a.dpt@university.edu,16,Tuesday
+MWABU JOHN,Computer Science,m.john@university.edu,16,Thursday
+Dr David,Mathematics,david@university.edu,16,"Monday,Tuesday,Wednesday"
+"o
+REV. DR. MBURUGU",Religious Studies,o.mburugu@university.edu,16,Tuesday
+DR CHESOGOR,Marketing,chesogor@university.edu,16,Saturday
+DR MILKA,General Studies,milka@university.edu,16,"Thursday,Friday"
+iMr. Kimathi Murungi,Mathematics,i.murungi@university.edu,16,Saturday
+Dt Jattani,Physics,d.jattani@university.edu,16,"Tuesday,Wednesday"
+Dr. Kithinji,Pharmacy,kithinji@university.edu,16,"Monday,Tuesday,Sunday"
+BIOC/HSCI 301,Pharmacy,b.301@university.edu,16,Monday
+Dr Thuba E,General Studies,t.e@university.edu,16,"Wednesday,Thursday,Friday"
+Dr Lucy Ikiara,General Studies,l.ikiara@university.edu,16,"Thursday,Friday"
+REV. DR. Alice.,Theology,alice.@university.edu,16,"Thursday,Friday"
+ORANG. M,General Studies,o.m@university.edu,16,"Tuesday,Wednesday,Thursday,Friday"
+ODERO EUNICE,General Studies,o.eunice@university.edu,16,Monday
+ANAT DPT,General Studies,a.dpt@university.edu,16,Sunday
+ANAT DPT.,General Studies,a.dpt.@university.edu,16,Saturday
+"n
+Dr Kubai J",Physical Education,n.j@university.edu,16,Tuesday
+"i
+RUTH KANYARU",Human Resource Management,i.kanyaru@university.edu,16,Monday
+ESTHER,General Studies,esther@university.edu,16,"Monday,Tuesday"
+EDUC DPT,Education,e.dpt@university.edu,16,"Monday,Tuesday,Wednesday"

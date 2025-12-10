@@ -1,11 +1,29 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
-import { MOCK_SESSIONS, MOCK_UNITS, MOCK_VENUES, MOCK_LECTURERS, Session } from "@/lib/mockData";
-import { Clock, MapPin, User, AlertCircle, Users } from 'lucide-react';
+import { Clock, MapPin, User, AlertCircle, Users, Loader2, Heart, Trophy } from 'lucide-react';
+import { api, Settings } from '@/lib/api';
+import type { TimetableSession } from '@/lib/api';
 
 interface TimetableGridProps {
   viewMode: 'program' | 'lecturer' | 'venue';
   filterId?: string;
+  searchQuery?: string;
+  currentSearchIndex?: number;
+  onSearchResultsChange?: (count: number) => void;
+}
+
+interface Session {
+  id: string;
+  unit_code: string;
+  unit_name: string;
+  lecturer_name: string;
+  venue_name: string;
+  day: string;
+  start_time: string;
+  end_time: string;
+  session_type: string;
+  program_groups: string[];
+  group_name?: string;
 }
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
@@ -19,10 +37,10 @@ const SESSION_GAP = 8; // Vertical gap between stacked sessions
 
 // Helper to check if two sessions overlap
 const doOverlap = (a: Session, b: Session) => {
-  const startA = parseFloat(a.startTime.replace(':', '.'));
-  const endA = parseFloat(a.endTime.replace(':', '.'));
-  const startB = parseFloat(b.startTime.replace(':', '.'));
-  const endB = parseFloat(b.endTime.replace(':', '.'));
+  const startA = parseFloat(a.start_time.replace(':', '.'));
+  const endA = parseFloat(a.end_time.replace(':', '.'));
+  const startB = parseFloat(b.start_time.replace(':', '.'));
+  const endB = parseFloat(b.end_time.replace(':', '.'));
   return startA < endB && startB < endA;
 };
 
@@ -30,11 +48,11 @@ const doOverlap = (a: Session, b: Session) => {
 function layoutDaySessions(sessions: Session[]) {
   // Sort by start time, then duration
   const sorted = [...sessions].sort((a, b) => {
-    const startA = parseFloat(a.startTime.replace(':', '.'));
-    const startB = parseFloat(b.startTime.replace(':', '.'));
+    const startA = parseFloat(a.start_time.replace(':', '.'));
+    const startB = parseFloat(b.start_time.replace(':', '.'));
     if (startA === startB) {
-       const durA = parseFloat(a.endTime.replace(':', '.')) - startA;
-       const durB = parseFloat(b.endTime.replace(':', '.')) - startB;
+       const durA = parseFloat(a.end_time.replace(':', '.')) - startA;
+       const durB = parseFloat(b.end_time.replace(':', '.')) - startB;
        return durB - durA; // Longest first
     }
     return startA - startB;
@@ -72,18 +90,152 @@ function layoutDaySessions(sessions: Session[]) {
   };
 }
 
-export default function TimetableGrid({ viewMode, filterId }: TimetableGridProps) {
-  const filteredSessions = MOCK_SESSIONS.filter(session => {
-    if (!filterId) return true;
-    if (viewMode === 'program') return session.programGroups.some(g => g.includes(filterId) || filterId === 'ALL');
-    if (viewMode === 'lecturer') return session.lecturerId === filterId;
-    if (viewMode === 'venue') return session.venueId === filterId;
+export default function TimetableGrid({ 
+  viewMode, 
+  filterId, 
+  searchQuery = '', 
+  currentSearchIndex = 0,
+  onSearchResultsChange 
+}: TimetableGridProps) {
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [units, setUnits] = useState<any[]>([]);
+  const [lecturers, setLecturers] = useState<any[]>([]);
+  const [venues, setVenues] = useState<any[]>([]);
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const searchResultRefs = React.useRef<HTMLDivElement[]>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Load timetable and reference data
+        const [timetableData, unitsData, lecturersData, venuesData, settingsData] = await Promise.all([
+          api.getActiveTimetable().catch(() => ({ sessions: [], conflicts: [], statistics: {}, metadata: {} })),
+          api.getAllUnits().catch(() => []),
+          api.getAllLecturers().catch(() => []),
+          api.getAllVenues().catch(() => []),
+          api.getSettings().catch(() => null)
+        ]);
+        
+        setSessions(timetableData.sessions || []);
+        setUnits(unitsData);
+        setLecturers(lecturersData);
+        setVenues(venuesData);
+        setSettings(settingsData);
+      } catch (err: any) {
+        setError(err.message || 'Failed to load timetable');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const filteredSessions = sessions.filter(session => {
+    if (!filterId || filterId === 'all') return true;
+    if (viewMode === 'program') return session.program_groups.some(g => g.includes(filterId));
+    if (viewMode === 'lecturer') return session.lecturer_name === filterId;
+    if (viewMode === 'venue') return session.venue_name === filterId;
     return true;
   });
 
-  const getUnitDetails = (id: string) => MOCK_UNITS.find(u => u.id === id);
-  const getVenueDetails = (id: string) => MOCK_VENUES.find(v => v.id === id);
-  const getLecturerDetails = (id: string) => MOCK_LECTURERS.find(l => l.id === id);
+  // Search functionality
+  const matchesSearch = (session: Session, query: string): boolean => {
+    if (!query.trim()) return false;
+    const lowerQuery = query.toLowerCase();
+    return (
+      session.unit_code.toLowerCase().includes(lowerQuery) ||
+      session.unit_name.toLowerCase().includes(lowerQuery) ||
+      session.lecturer_name.toLowerCase().includes(lowerQuery) ||
+      session.venue_name.toLowerCase().includes(lowerQuery)
+    );
+  };
+
+  const searchMatches = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    return filteredSessions
+      .map((session, index) => ({ session, index }))
+      .filter(({ session }) => matchesSearch(session, searchQuery));
+  }, [filteredSessions, searchQuery]);
+
+  // Update search results count
+  useEffect(() => {
+    if (onSearchResultsChange) {
+      onSearchResultsChange(searchMatches.length);
+    }
+  }, [searchMatches.length, onSearchResultsChange]);
+
+  // Scroll to current search result
+  useEffect(() => {
+    if (searchMatches.length > 0 && currentSearchIndex < searchResultRefs.current.length) {
+      const element = searchResultRefs.current[currentSearchIndex];
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [currentSearchIndex, searchMatches.length]);
+
+  const getUnitColor = (code: string) => {
+    const colors = [
+      'bg-blue-100 text-blue-800 border-blue-200',
+      'bg-emerald-100 text-emerald-800 border-emerald-200',
+      'bg-amber-100 text-amber-800 border-amber-200',
+      'bg-rose-100 text-rose-800 border-rose-200',
+      'bg-purple-100 text-purple-800 border-purple-200',
+      'bg-cyan-100 text-cyan-800 border-cyan-200',
+      'bg-indigo-100 text-indigo-800 border-indigo-200',
+    ];
+    const hash = code.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
+
+  const getInstitutionalEvents = (day: string) => {
+    if (!settings || !settings.institutional_events) return [];
+    
+    return settings.institutional_events
+      .filter(event => event.enabled && event.day === day)
+      .map(event => ({
+        name: event.name,
+        start: event.start_time,
+        end: event.end_time,
+        color: event.color || 'purple'
+      }));
+  };
+
+  if (loading) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center space-y-2">
+          <AlertCircle className="h-8 w-8 text-destructive mx-auto" />
+          <p className="text-sm text-muted-foreground">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (sessions.length === 0) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center space-y-2">
+          <p className="text-sm text-muted-foreground">No timetable data available</p>
+          <p className="text-xs text-muted-foreground">Generate a timetable to see it here</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden flex flex-col h-full print:border-0 print:shadow-none">
@@ -139,15 +291,61 @@ export default function TimetableGrid({ viewMode, filterId }: TimetableGridProps
                           ))}
                        </div>
 
+                       {/* Institutional Events (Devotion/Sports/Custom) */}
+                       {getInstitutionalEvents(day).map((event, idx) => {
+                          const start = parseFloat(event.start.replace(':', '.'));
+                          const end = parseFloat(event.end.replace(':', '.'));
+                          const duration = end - start;
+                          
+                          const left = (start - START_HOUR) * PIXELS_PER_HOUR;
+                          const width = duration * PIXELS_PER_HOUR;
+                          
+                          // Color mapping
+                          const colorMap: Record<string, { bg: string; border: string; text: string }> = {
+                            purple: { bg: 'bg-purple-100', border: 'border-purple-400', text: 'text-purple-800' },
+                            orange: { bg: 'bg-orange-100', border: 'border-orange-400', text: 'text-orange-800' },
+                            blue: { bg: 'bg-blue-100', border: 'border-blue-400', text: 'text-blue-800' },
+                            green: { bg: 'bg-green-100', border: 'border-green-400', text: 'text-green-800' },
+                            red: { bg: 'bg-red-100', border: 'border-red-400', text: 'text-red-800' },
+                            yellow: { bg: 'bg-yellow-100', border: 'border-yellow-400', text: 'text-yellow-800' },
+                            pink: { bg: 'bg-pink-100', border: 'border-pink-400', text: 'text-pink-800' },
+                            indigo: { bg: 'bg-indigo-100', border: 'border-indigo-400', text: 'text-indigo-800' },
+                          };
+                          
+                          const colors = colorMap[event.color] || colorMap.purple;
+                          const Icon = event.color === 'orange' ? Trophy : Heart;
+                          
+                          return (
+                            <div
+                              key={`event-${idx}`}
+                              className={cn(
+                                "absolute rounded-md border-2 border-dashed p-2 flex items-center justify-center gap-2 pointer-events-none font-bold",
+                                colors.bg,
+                                colors.border,
+                                colors.text
+                              )}
+                              style={{
+                                left: `${left}px`,
+                                width: `${width - 8}px`,
+                                top: '12px',
+                                bottom: '12px',
+                                zIndex: 5
+                              }}
+                            >
+                              <Icon className="w-5 h-5 shrink-0" />
+                              <div className="flex flex-col items-center">
+                                <span className="text-sm uppercase tracking-wider">{event.name}</span>
+                                <span className="text-xs font-normal">{event.start} - {event.end}</span>
+                              </div>
+                            </div>
+                          );
+                       })}
+
                        {/* Sessions */}
                        {layoutData.map(({ session, rowIndex }) => {
-                          const unit = getUnitDetails(session.unitId);
-                          const venue = getVenueDetails(session.venueId);
-                          const lecturer = getLecturerDetails(session.lecturerId);
-                          
                           // Calculate Horizontal Position
-                          const start = parseFloat(session.startTime.replace(':', '.'));
-                          const end = parseFloat(session.endTime.replace(':', '.'));
+                          const start = parseFloat(session.start_time.replace(':', '.'));
+                          const end = parseFloat(session.end_time.replace(':', '.'));
                           const duration = end - start;
                           
                           const left = (start - START_HOUR) * PIXELS_PER_HOUR;
@@ -156,16 +354,28 @@ export default function TimetableGrid({ viewMode, filterId }: TimetableGridProps
                           // Calculate Vertical Position (Stacking)
                           const top = 12 + (rowIndex * (SESSION_HEIGHT + SESSION_GAP));
 
-                          const colorClass = unit?.color || "bg-gray-100 text-gray-800 border-gray-200";
+                          const colorClass = getUnitColor(session.unit_code);
                           const baseColor = colorClass.split('-')[1] || 'gray'; 
+
+                          // Check if this session matches search
+                          const isSearchMatch = matchesSearch(session, searchQuery);
+                          const searchMatchIndex = searchMatches.findIndex(m => m.session.id === session.id);
+                          const isCurrentSearchResult = searchMatchIndex === currentSearchIndex;
 
                           return (
                             <div 
                               key={session.id}
+                              ref={isSearchMatch ? (el) => {
+                                if (el && searchMatchIndex >= 0) {
+                                  searchResultRefs.current[searchMatchIndex] = el;
+                                }
+                              } : undefined}
                               className={cn(
                                 "absolute rounded-md border p-2 text-xs shadow-sm hover:shadow-md transition-all cursor-pointer group overflow-hidden flex flex-col gap-0.5 hover:z-50 hover:scale-[1.02]",
                                 "border-l-[4px]",
-                                colorClass
+                                colorClass,
+                                isCurrentSearchResult && "ring-4 ring-yellow-400 ring-offset-2 shadow-2xl z-50 scale-105",
+                                isSearchMatch && !isCurrentSearchResult && "ring-2 ring-yellow-300"
                               )}
                               style={{ 
                                 left: `${left}px`, 
@@ -176,24 +386,24 @@ export default function TimetableGrid({ viewMode, filterId }: TimetableGridProps
                               }}
                             >
                                <div className="flex justify-between items-start">
-                                  <span className="font-bold font-mono text-[10px] uppercase tracking-wider opacity-90 truncate max-w-[70%]">{unit?.code}</span>
+                                  <span className="font-bold font-mono text-[10px] uppercase tracking-wider opacity-90 truncate max-w-[70%]">{session.unit_code}</span>
                                   <div className="flex gap-1 shrink-0">
-                                     {session.groupName && <span className="font-bold text-[9px] px-1 rounded bg-black/10">{session.groupName}</span>}
-                                     {session.type === 'Lab' && <span className="font-bold text-[9px] px-1 rounded bg-black/5">LAB</span>}
-                                     {session.type === 'Exam' && <span className="font-bold text-[9px] px-1 rounded bg-red-500/10 text-red-700">EXAM</span>}
+                                     {session.group_name && <span className="font-bold text-[9px] px-1 rounded bg-black/10">{session.group_name}</span>}
+                                     {session.session_type === 'Lab' && <span className="font-bold text-[9px] px-1 rounded bg-black/5">LAB</span>}
+                                     {session.session_type === 'Exam' && <span className="font-bold text-[9px] px-1 rounded bg-red-500/10 text-red-700">EXAM</span>}
                                   </div>
                                </div>
                                
-                               <h4 className="font-semibold leading-tight text-[11px] line-clamp-2 my-auto">{unit?.name}</h4>
+                               <h4 className="font-semibold leading-tight text-[11px] line-clamp-2 my-auto">{session.unit_name}</h4>
                                
                                <div className="flex items-center justify-between text-[10px] opacity-80 mt-auto pt-1 border-t border-black/5">
                                   <div className="flex items-center gap-1">
                                      <MapPin className="w-3 h-3" />
-                                     <span className="truncate max-w-[60px]">{venue?.name}</span>
+                                     <span className="truncate max-w-[60px]">{session.venue_name}</span>
                                   </div>
                                   <div className="flex items-center gap-1">
                                      <User className="w-3 h-3" />
-                                     <span className="truncate max-w-[80px]">{lecturer?.name.split(' ').pop()}</span>
+                                     <span className="truncate max-w-[80px]">{session.lecturer_name.split(' ').pop()}</span>
                                   </div>
                                </div>
                             </div>

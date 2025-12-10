@@ -14,12 +14,23 @@ app = FastAPI(
     description="Automated Academic Timetable Generation System with Constraint Optimization"
 )
 
-# CORS Configuration - Allow frontend to access API
+# CORS Configuration - Restricted for security
+# In production, replace with your actual frontend domain
+ALLOWED_ORIGINS = [
+    "http://localhost:5000",
+    "http://127.0.0.1:5000",
+    "http://0.0.0.0:5000",
+]
+
+# Add wildcards for development on different network interfaces
+if os.getenv("ENVIRONMENT", "development") == "development":
+    ALLOWED_ORIGINS.append("*")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your frontend URL
+    allow_origins=ALLOWED_ORIGINS if os.getenv("ENVIRONMENT") != "development" else ["*"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
     allow_headers=["*"],
 )
 
@@ -46,4 +57,4 @@ async def health_check():
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PYTHON_PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)

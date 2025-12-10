@@ -1,38 +1,51 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRoute } from "wouter";
 import Shell from '@/components/layout/Shell';
 import TimetableGrid from '@/components/timetable/TimetableGrid';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { FileDown, Filter } from 'lucide-react';
+import { FileDown, Filter, Loader2 } from 'lucide-react';
 import { exportToPDF } from '@/lib/export';
 import { useToast } from "@/hooks/use-toast";
-
-const MOCK_OPTIONS = {
-  master: [{ id: 'ALL', label: 'All Programs' }],
-  program: [
-    { id: 'CS-Y1', label: 'Computer Science Year 1' },
-    { id: 'IT-Y1', label: 'Information Tech Year 1' },
-    { id: 'NRSG-Y3', label: 'Nursing Year 3' }
-  ],
-  lecturer: [
-    { id: 'l1', label: 'Dr. James Kubai' },
-    { id: 'l2', label: 'Prof. Sarah Mungai' },
-    { id: 'l3', label: 'Rev. Dr. Alice M' }
-  ],
-  venue: [
-    { id: 'v1', label: 'TLH 1' },
-    { id: 'v2', label: 'LAB 1 (Comp)' },
-    { id: 'v3', label: 'GF 1 (Science)' }
-  ]
-};
+import { api } from '@/lib/api';
 
 export default function ScheduleView() {
   const [match, params] = useRoute("/schedule/:type");
   const type = (params?.type as 'master' | 'program' | 'lecturer' | 'venue') || 'master';
   const { toast } = useToast();
   
-  const [selectedId, setSelectedId] = React.useState<string>(type === 'master' ? 'ALL' : MOCK_OPTIONS[type]?.[0]?.id || '');
+  const [selectedId, setSelectedId] = useState<string>('all');
+  const [lecturers, setLecturers] = useState<Array<{ name: string }>>([]);
+  const [venues, setVenues] = useState<Array<{ name: string }>>([]);
+  const [units, setUnits] = useState<Array<{ code: string; name: string; program_groups: string[] }>>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [lecturersData, venuesData, unitsData] = await Promise.all([
+          api.getAllLecturers(),
+          api.getAllVenues(),
+          api.getAllUnits()
+        ]);
+        
+        setLecturers(lecturersData || []);
+        setVenues(venuesData || []);
+        setUnits(unitsData || []);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+
+  // Reset selection when type changes
+  useEffect(() => {
+    setSelectedId('all');
+  }, [type]);
 
   const getTitle = () => {
     switch(type) {
@@ -56,7 +69,21 @@ export default function ScheduleView() {
     });
   };
 
-  const options = MOCK_OPTIONS[type] || [];
+  const getOptions = () => {
+    if (type === 'lecturer') return lecturers;
+    if (type === 'venue') return venues;
+    if (type === 'program') {
+      // Extract unique program groups from units
+      const programGroups = new Set<string>();
+      units.forEach(unit => {
+        unit.program_groups?.forEach(pg => programGroups.add(pg));
+      });
+      return Array.from(programGroups).map(pg => ({ name: pg }));
+    }
+    return [];
+  };
+
+  const options = getOptions();
 
   return (
     <Shell>
@@ -72,14 +99,19 @@ export default function ScheduleView() {
           </div>
           <div className="flex items-center gap-2">
              {type !== 'master' && (
-               <Select value={selectedId} onValueChange={setSelectedId}>
+               <Select value={selectedId} onValueChange={setSelectedId} disabled={loading}>
                  <SelectTrigger className="w-[250px]">
-                   <Filter className="w-4 h-4 mr-2" />
-                   <SelectValue placeholder={`Select ${type}...`} />
+                   {loading ? (
+                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                   ) : (
+                     <Filter className="w-4 h-4 mr-2" />
+                   )}
+                   <SelectValue placeholder={loading ? "Loading..." : `Select ${type}...`} />
                  </SelectTrigger>
                  <SelectContent>
+                   <SelectItem value="all">All {type === 'lecturer' ? 'Lecturers' : type === 'venue' ? 'Venues' : 'Programs'}</SelectItem>
                    {options.map(opt => (
-                     <SelectItem key={opt.id} value={opt.id}>{opt.label}</SelectItem>
+                     <SelectItem key={opt.name} value={opt.name}>{opt.name}</SelectItem>
                    ))}
                  </SelectContent>
                </Select>

@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Shell from '@/components/layout/Shell';
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2, ArrowRight, X } from 'lucide-react';
+import { Upload, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2, ArrowRight, X, RefreshCw, Trash2, Eye, Settings as SettingsIcon, Clock, Calendar } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { useLocation } from 'wouter';
 import { cn } from "@/lib/utils";
-import { api } from '@/lib/api';
+import { api, Settings } from '@/lib/api';
 import { toast } from 'sonner';
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 
 interface FileUploadState {
   file: File | null;
@@ -31,7 +33,16 @@ export default function Generate() {
   });
   
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedTimetableId, setGeneratedTimetableId] = useState<string | null>(null);
+  const [generationProgress, setGenerationProgress] = useState<string>('');
+  const [timetables, setTimetables] = useState<any[]>([]);
+  const [loadingTimetables, setLoadingTimetables] = useState(false);
+  const [dbStatus, setDbStatus] = useState<{
+    units: number;
+    lecturers: number;
+    venues: number;
+  } | null>(null);
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
   
   const unitInputRef = useRef<HTMLInputElement>(null);
   const lecturerInputRef = useRef<HTMLInputElement>(null);
@@ -40,6 +51,55 @@ export default function Generate() {
   const allFilesUploaded = unitFile.status === 'success' && 
                           lecturerFile.status === 'success' && 
                           venueFile.status === 'success';
+  
+  const hasDataInDatabase = dbStatus && 
+                           dbStatus.units > 0 && 
+                           dbStatus.lecturers > 0 && 
+                           dbStatus.venues > 0;
+  
+  // Prioritize newly uploaded files over database data
+  const canGenerate = allFilesUploaded || hasDataInDatabase;
+  const willUseNewFiles = allFilesUploaded;
+
+  useEffect(() => {
+    loadTimetables();
+    checkDatabaseStatus();
+    loadSettings();
+  }, []);
+
+  const loadSettings = async () => {
+    try {
+      const data = await api.getSettings();
+      setSettings(data);
+    } catch (error) {
+      console.error('Failed to load settings:', error);
+    }
+  };
+
+  const checkDatabaseStatus = async () => {
+    try {
+      const status = await api.getUploadStatus();
+      setDbStatus({
+        units: status.units || 0,
+        lecturers: status.lecturers || 0,
+        venues: status.venues || 0
+      });
+    } catch (error) {
+      console.error('Failed to check database status:', error);
+    }
+  };
+
+  const loadTimetables = async () => {
+    setLoadingTimetables(true);
+    try {
+      const data = await api.listTimetables();
+      setTimetables(data || []);
+    } catch (error) {
+      console.error('Failed to load timetables:', error);
+    } finally {
+      setLoadingTimetables(false);
+    }
+  };
 
   const handleFileSelect = async (
     file: File,
@@ -65,6 +125,9 @@ export default function Generate() {
         count: response.count
       });
       toast.success(response.message);
+      
+      // Refresh database status after successful upload
+      await checkDatabaseStatus();
     } catch (error: any) {
       setState({
         file,
@@ -78,21 +141,36 @@ export default function Generate() {
   const handleGenerate = async () => {
     setIsGenerating(true);
     setStep(2);
+    setGenerationProgress('Initializing solver...');
     
     try {
+      // Simulate progress updates
+      setTimeout(() => setGenerationProgress('Loading data and settings...'), 500);
+      setTimeout(() => setGenerationProgress('Creating session requirements...'), 1000);
+      setTimeout(() => setGenerationProgress('Building constraint model...'), 1500);
+      setTimeout(() => setGenerationProgress('Running CP-SAT optimizer...'), 2000);
+      
       const result = await api.generateTimetable();
       
+      setGenerationProgress('Saving results...');
+      
       if (result.conflicts && result.conflicts.length > 0) {
-        toast.warning(`Timetable generated with ${result.conflicts.length} conflicts`);
+        toast.warning(`Timetable generated with ${result.conflicts.length} conflicts`, {
+          description: 'You can review and resolve conflicts in the Conflicts page.'
+        });
       } else {
-        toast.success('Timetable generated successfully!');
+        toast.success('Timetable generated successfully!', {
+          description: `${result.sessions?.length || 0} sessions scheduled with zero conflicts.`
+        });
       }
       
-      // Store timetable in sessionStorage for viewing
-      sessionStorage.setItem('generated_timetable', JSON.stringify(result));
+      // Reload timetables list
+      await loadTimetables();
       
       setTimeout(() => {
-        setLocation('/');
+        setStep(1);
+        setIsGenerating(false);
+        setGenerationProgress('');
       }, 1500);
       
     } catch (error: any) {
@@ -102,12 +180,60 @@ export default function Generate() {
     }
   };
 
+  const handleActivate = async (id: number) => {
+    try {
+      await api.activateTimetable(id);
+      toast.success('Timetable activated - Navigating to dashboard...');
+      await loadTimetables();
+      // Navigate to dashboard to view the activated timetable
+      setTimeout(() => setLocation('/'), 500);
+    } catch (error: any) {
+      toast.error(`Failed to activate: ${error.message}`);
+    }
+  };
+
+  const handleViewTimetable = async (id: number, isActive: boolean) => {
+    try {
+      // If not active, activate it first
+      if (!isActive) {
+        await api.activateTimetable(id);
+        toast.success('Timetable activated');
+        await loadTimetables();
+      }
+      // Navigate to dashboard (master schedule)
+      setLocation('/');
+    } catch (error: any) {
+      toast.error(`Failed to view timetable: ${error.message}`);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this timetable version?')) return;
+    
+    try {
+      await api.deleteTimetable(id);
+      toast.success('Timetable deleted');
+      await loadTimetables();
+    } catch (error: any) {
+      toast.error(`Failed to delete: ${error.message}`);
+    }
+  };
+
   return (
     <Shell>
       <div className="max-w-3xl mx-auto py-12 space-y-8">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Generate New Timetable</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {settings ? (
+              <>Generate Timetable: {settings.academic_year} • Trimester {settings.trimester}</>
+            ) : (
+              <>Generate New Timetable</>
+            )}
+          </h1>
           <p className="text-muted-foreground">Upload your academic data files to generate an optimized schedule.</p>
+          <p className="text-xs text-muted-foreground mt-2">
+            🚀 Powered by Google OR-Tools CP-SAT Constraint Solver
+          </p>
         </div>
 
         {/* Steps */}
@@ -127,6 +253,88 @@ export default function Generate() {
           <CardContent className="py-12 flex flex-col items-center text-center space-y-4">
             {step === 1 && (
               <>
+                {/* Settings Info Banner */}
+                {settings && (
+                  <div className="w-full mb-4">
+                    <button
+                      onClick={() => setShowSettings(!showSettings)}
+                      className="w-full p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
+                    >
+                      <div className="flex items-start gap-3 text-left">
+                        <SettingsIcon className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium text-blue-900 dark:text-blue-100">Time Allocation Configuration</h4>
+                            <span className="text-xs text-blue-600 dark:text-blue-400">
+                              {showSettings ? 'Hide' : 'Show'} Details
+                            </span>
+                          </div>
+                          <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                            {settings.semester_weeks} weeks × {Math.floor(settings.total_hours_per_unit / settings.semester_weeks)} hrs/week = {settings.total_hours_per_unit} total hours per unit
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                    {showSettings && (
+                      <div className="mt-2 p-4 bg-blue-50/50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded-lg text-sm space-y-3">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <div className="text-xs text-muted-foreground">Semester Weeks</div>
+                            <div className="font-medium">{settings.semester_weeks} weeks</div>
+                          </div>
+                          <div>
+                            <div className="text-xs text-muted-foreground">Total Hours/Unit</div>
+                            <div className="font-medium">{settings.total_hours_per_unit} hours</div>
+                          </div>
+                          <div>
+                            <div className="text-xs text-muted-foreground">Weekly Hours (Global)</div>
+                            <div className="font-medium">{Math.floor(settings.total_hours_per_unit / settings.semester_weeks)} hrs/week</div>
+                          </div>
+                          <div>
+                            <div className="text-xs text-muted-foreground">Allowed Patterns</div>
+                            <div className="font-medium">{settings.allowed_patterns.length} patterns</div>
+                          </div>
+                        </div>
+                        <Separator />
+                        <div className="space-y-2">
+                          <div className="text-xs font-medium text-muted-foreground">Pattern Preferences</div>
+                          <div className="flex gap-2">
+                            {settings.prefer_three_hour_blocks && (
+                              <Badge variant="outline" className="text-xs">
+                                ✓ Prefer 3-hour blocks
+                              </Badge>
+                            )}
+                            {settings.allow_split_blocks && (
+                              <Badge variant="outline" className="text-xs">
+                                ✓ Allow split blocks
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-xs text-muted-foreground pt-2 border-t">
+                          💡 Configure these settings in <a href="/settings" className="text-blue-600 hover:underline">Settings → Time Allocation</a>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Database Status Banner */}
+                {hasDataInDatabase && (
+                  <div className="w-full mb-4 p-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
+                    <div className="flex items-start gap-3 text-left">
+                      <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                      <div className="flex-1">
+                        <h4 className="font-medium text-green-900 dark:text-green-100">Database Ready for Generation</h4>
+                        <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                          {dbStatus.units} units, {dbStatus.lecturers} lecturers, {dbStatus.venues} venues loaded. 
+                          You can generate timetables directly or upload new data to replace existing records.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                   <Upload className="w-8 h-8 text-primary" />
                 </div>
@@ -264,12 +472,29 @@ export default function Generate() {
                 <Button
                   size="lg"
                   className="mt-6 gap-2"
-                  disabled={!allFilesUploaded}
+                  disabled={!canGenerate}
                   onClick={handleGenerate}
                   data-testid="button-generate-timetable"
                 >
-                  Generate Timetable <ArrowRight className="w-4 h-4" />
+                  <RefreshCw className="w-4 h-4" />
+                  {willUseNewFiles 
+                    ? 'Generate with New Files' 
+                    : timetables.length > 0 
+                      ? 'Regenerate from Database' 
+                      : 'Generate Timetable'}
                 </Button>
+                {!canGenerate && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {hasDataInDatabase ? 'Ready to generate' : 'Please upload all required files or load data into the database'}
+                  </p>
+                )}
+                {canGenerate && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {willUseNewFiles 
+                      ? `✓ Using newly uploaded files (${unitFile.count} units, ${lecturerFile.count} lecturers, ${venueFile.count} venues)` 
+                      : `Using database data (${dbStatus?.units} units, ${dbStatus?.lecturers} lecturers, ${dbStatus?.venues} venues)`}
+                  </p>
+                )}
               </>
             )}
 
@@ -277,16 +502,108 @@ export default function Generate() {
               <div className="py-8 space-y-6 animate-in fade-in zoom-in duration-500">
                 <Loader2 className="w-12 h-12 text-primary animate-spin mx-auto" data-testid="loader-generating" />
                 <div className="space-y-2">
-                  <h3 className="text-xl font-semibold">Generating Timetable...</h3>
+                  <h3 className="text-xl font-semibold">Generating New Timetable Version...</h3>
                   <p className="text-muted-foreground">
-                    Using OR-Tools constraint solver to optimize schedule and minimize conflicts.
+                    CP-SAT solver is optimizing your schedule with constraints...
                   </p>
-                  <p className="text-sm text-muted-foreground">This may take 10-30 seconds.</p>
+                  {generationProgress && (
+                    <div className="mt-4 flex items-center justify-center gap-2 text-sm text-blue-600 dark:text-blue-400">
+                      <Clock className="h-4 w-4 animate-pulse" />
+                      <span>{generationProgress}</span>
+                    </div>
+                  )}
                 </div>
+                {settings && (
+                  <div className="mt-6 max-w-md mx-auto">
+                    <div className="p-4 bg-muted/50 rounded-lg space-y-2 text-sm text-left">
+                      <div className="font-medium text-center mb-3">Generation Parameters</div>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="text-muted-foreground">Data Source:</div>
+                        <div className="font-medium">{willUseNewFiles ? 'Uploaded Files' : 'Database'}</div>
+                        <div className="text-muted-foreground">Units:</div>
+                        <div className="font-medium">{willUseNewFiles ? unitFile.count : dbStatus?.units}</div>
+                        <div className="text-muted-foreground">Weekly Hours:</div>
+                        <div className="font-medium">{Math.floor(settings.total_hours_per_unit / settings.semester_weeks)} hrs/week</div>
+                        <div className="text-muted-foreground">Patterns:</div>
+                        <div className="font-medium">{settings.allowed_patterns.map(p => `[${p.pattern.join(',')}]`).join(', ')}</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </CardContent>
         </Card>
+
+        {/* Timetable Versions */}
+        {timetables.length > 0 && step === 1 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Generated Timetable Versions ({timetables.length})</CardTitle>
+              <CardDescription>
+                Manage and compare different timetable versions. Activate a version to view it in the dashboard.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {timetables.map((timetable) => (
+                  <div
+                    key={timetable.id}
+                    className={cn(
+                      "p-4 border rounded-lg transition-colors",
+                      timetable.is_active ? "bg-primary/5 border-primary" : "bg-background hover:bg-muted/50"
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium">
+                            Version {timetable.id}
+                            {timetable.name && ` - ${timetable.name}`}
+                          </h4>
+                          {timetable.is_active && (
+                            <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+                              Active
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-sm text-muted-foreground mt-1 space-y-0.5">
+                          <div>
+                            Created: {new Date(timetable.created_at).toLocaleString()}
+                          </div>
+                          <div className="flex gap-4 mt-1">
+                            <span>Sessions: {timetable.statistics?.total_sessions || 0}</span>
+                            <span className={timetable.conflicts?.length > 0 ? "text-destructive" : "text-green-600"}>
+                              Conflicts: {timetable.conflicts?.length || 0}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant={timetable.is_active ? "default" : "outline"}
+                          onClick={() => handleViewTimetable(timetable.id, timetable.is_active)}
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => handleDelete(timetable.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Download Sample Files */}
         <Card>
