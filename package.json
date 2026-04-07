@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev:client": "vite dev --port 5000",
-    "dev:backend": "cd backend && C:/Users/user/Downloads/Timetable-Maker/.venv/Scripts/python.exe -m uvicorn main:app --reload --host 127.0.0.1 --port 8000 --timeout-keep-alive 300",
+    "dev:backend": "node script/dev-backend.mjs",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:client\" --kill-others-on-fail",
     "build": "tsx script/build.ts",
     "start": "NODE_ENV=production node dist/index.cjs",
